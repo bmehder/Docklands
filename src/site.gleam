@@ -1,6 +1,6 @@
 import gleam/string
 
-pub const base_url = "https://docklands.bmehder.chatgpt.site"
+pub const base_url = "https://docklands-ssg.vercel.app"
 
 pub type Metadata {
   Metadata(

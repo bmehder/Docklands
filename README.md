@@ -6,7 +6,7 @@
 
 A small, content-first static-site starter built with Gleam, Markdown, Tailwind CSS, and optional Lustre islands.
 
-**Live site:** [docklands.bmehder.chatgpt.site](https://docklands.bmehder.chatgpt.site)
+**Live site:** [docklands-ssg.vercel.app](https://docklands-ssg.vercel.app)
 
 Docklands is a reference project rather than a generalized framework. It demonstrates how to build a complete content-led website while keeping the source and generated output easy to understand.
 
