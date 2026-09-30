@@ -115,6 +115,12 @@ The shared layout emits titles, descriptions, canonical URLs, Open Graph fields,
 
 Each build also creates `sitemap.xml`, `robots.txt`, and a non-indexed `404.html`.
 
+## Deploy to Vercel
+
+Import the GitHub repository into Vercel with the root directory left as `./` and the Framework Preset set to **Other**. The checked-in `vercel.json` pins the Gleam compiler, runs the generator on Gleam's JavaScript target, and tells Vercel to publish only `dist/`. No environment variables are required.
+
+Vercel rebuilds and deploys the site whenever the production branch changes. Preview deployments use the same configuration.
+
 ## Main dependencies
 
 - [Gleam](https://gleam.run/) — generation and widget language
