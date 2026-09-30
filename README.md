@@ -128,7 +128,7 @@ Vercel rebuilds and deploys the site whenever the production branch changes. Pre
 - [Simplifile](https://simplifile.hexdocs.pm/) — filesystem operations
 - [Tailwind CSS](https://tailwindcss.com/) — static styling
 - [Lustre](https://lustre.hexdocs.pm/) — isolated interactive islands
-- [Sharp](https://sharp.pixelplumbing.com/) — build-time image processing
+- [esbuild](https://esbuild.github.io/) — JavaScript bundling for the Vercel build\n- [Sharp](https://sharp.pixelplumbing.com/) — build-time image processing
 
 ## Deliberate non-goals
 
