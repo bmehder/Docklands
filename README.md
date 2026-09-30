@@ -57,7 +57,9 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │   ├── docklands.gleam          # Markdown rendering and file generation
 │   └── site.gleam               # Shared document layout and navigation
 ├── widgets/
+│   ├── build_receipt_entry.mjs  # Vercel widget-bundle entry point
 │   └── src/build_receipt.gleam  # Isolated Lustre build-receipt island
+├── vercel.json                  # Vercel build and output settings
 └── dist/                        # Generated site; not committed
 ```
 
@@ -97,7 +99,7 @@ Set a collection's `indexable` field to `False` to exclude its index and all ent
 
 ## Reusable components
 
-Explicit placeholders are replaced with HTML returned by functions in `src/components.gleam` before Markdown is parsed. This keeps repeated markup in one place without introducing a general template language or constructing every page through an HTML DSL.
+Explicit placeholders are replaced with HTML returned by functions in `src/components.gleam` before Markdown is parsed. A marker expands only when it appears on a standalone line outside a fenced code block, so inline and code examples remain literal. This keeps repeated markup in one place without introducing a general template language or constructing every page through an HTML DSL.
 
 ## The Lustre island
 
@@ -111,13 +113,15 @@ The custom site icon lives at `assets/static/favicon.svg`. The build derives a 3
 
 ## Metadata and discovery
 
-The shared layout emits titles, descriptions, canonical URLs, Open Graph fields, X card fields, and icon links. Collection entries use their featured artwork for social previews; ordinary routes use `assets/static/og.png`.
+The shared layout emits titles, descriptions, canonical URLs, Open Graph fields, X card fields, and icon links. Collection entries with featured artwork use it for social previews; entries without artwork and ordinary routes fall back to `assets/static/og.png`.
 
 Each build also creates `sitemap.xml`, `robots.txt`, and a non-indexed `404.html`.
 
 ## Deploy to Vercel
 
 Import the GitHub repository into Vercel with the root directory left as `./` and the Framework Preset set to **Other**. The checked-in `vercel.json` pins the Gleam compiler, runs the generator on Gleam's JavaScript target, and tells Vercel to publish only `dist/`. No environment variables are required.
+
+The normal local build uses Lustre's development tools and therefore requires Erlang. Vercel instead compiles the widget to JavaScript and bundles the small entry module with esbuild, avoiding an Erlang installation in the deployment environment.
 
 Vercel rebuilds and deploys the site whenever the production branch changes. Preview deployments use the same configuration.
 
@@ -128,7 +132,8 @@ Vercel rebuilds and deploys the site whenever the production branch changes. Pre
 - [Simplifile](https://simplifile.hexdocs.pm/) — filesystem operations
 - [Tailwind CSS](https://tailwindcss.com/) — static styling
 - [Lustre](https://lustre.hexdocs.pm/) — isolated interactive islands
-- [esbuild](https://esbuild.github.io/) — JavaScript bundling for the Vercel build\n- [Sharp](https://sharp.pixelplumbing.com/) — build-time image processing
+- [esbuild](https://esbuild.github.io/) — JavaScript bundling for the Vercel build
+- [Sharp](https://sharp.pixelplumbing.com/) — build-time image processing
 
 ## Deliberate non-goals
 
