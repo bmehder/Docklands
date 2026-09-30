@@ -2,7 +2,7 @@
 title: Static first is a deployment strategy
 description: Choosing static output removes entire categories of production work.
 published: 2026-09-29
-featured_image: /assets/images/dispatch-output.svg
+featured_image: /assets/images/note-output.svg
 featured_alt: An abstract generated document with structural content lines
 ---
 

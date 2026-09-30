@@ -5,7 +5,8 @@
     "build": "gleam run && npm run build:images && npm run build:widget && npm run build:css",
     "build:css": "tailwindcss -i ./assets/css/site.css -o ./dist/assets/site.css --minify",
     "build:images": "node scripts/optimize-images.mjs",
-    "build:widget": "cd widgets && gleam run -m lustre/dev build dispatch --minify --no-html --outdir=../dist/assets"
+    "build:widget": "cd widgets && gleam run -m lustre/dev build build_receipt --minify --no-html --outdir=../dist/assets",
+    "serve": "python3 -m http.server 8000 --directory dist"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.0",

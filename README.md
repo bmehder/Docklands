@@ -28,7 +28,7 @@ You will need Gleam, Erlang/OTP, Node.js, and npm.
 ```sh
 npm install
 npm run build
-python3 -m http.server 8000 --directory dist
+npm run serve
 ```
 
 Open [http://localhost:8000](http://localhost:8000). Python's basic server does not automatically use the custom error page, so preview it directly at `/404.html`.
@@ -43,13 +43,13 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │   └── static/                  # Copied assets and image sources
 ├── collections/
 │   ├── guides/                  # Practical documentation entries
-│   └── dispatches/              # Architectural notes
+│   └── notes/                   # Short architectural notes
 ├── routes/                      # Markdown tree mirrored into dist/
 │   ├── index.md
 │   ├── 404.md
 │   ├── about/index.md
 │   ├── guides/index.md
-│   └── dispatches/index.md
+│   └── notes/index.md
 ├── scripts/optimize-images.mjs
 ├── src/
 │   ├── collections.gleam        # Collection definitions and entry type
@@ -57,7 +57,7 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │   ├── docklands.gleam          # Markdown rendering and file generation
 │   └── site.gleam               # Shared document layout and navigation
 ├── widgets/
-│   └── src/dispatch.gleam       # Isolated Lustre build-receipt island
+│   └── src/build_receipt.gleam  # Isolated Lustre build-receipt island
 └── dist/                        # Generated site; not committed
 ```
 
@@ -69,7 +69,7 @@ The root project targets Erlang for filesystem-based generation. The separate `w
 
 1. Gleam discovers routes and collection entries, parses Markdown with Mörk, applies the shared layout, generates discovery files, and copies static assets.
 2. The image script converts supported raster files beneath `assets/static/images/` to maximum-width 1000px quality-68 WebP output and derives favicon PNGs from one SVG master.
-3. Lustre's development tools bundle the isolated widget into `dist/assets/dispatch.js`.
+3. Lustre's development tools bundle the isolated build-receipt widget into `dist/assets/build_receipt.js`.
 4. Tailwind scans the source and writes one minified stylesheet.
 
 The final `dist/` directory can be served by any static host.
@@ -89,9 +89,9 @@ Add `noindex: true` to omit a route or collection entry from the sitemap and emi
 
 ## Collections
 
-`src/collections.gleam` defines every collection's source directory, route, listing placeholder, item label, and indexing policy. Docklands includes two complete examples: Guides and Dispatches.
+`src/collections.gleam` defines every collection's source directory, route, listing placeholder, item label, and indexing policy. Docklands includes two examples: Guides for documentation and Notes for shorter architectural essays.
 
-Every collection entry requires `title`, `description`, `published`, `featured_image`, and `featured_alt` frontmatter. Entries are sorted newest-first. `{{ featured-image }}` places the entry artwork, while the collection index uses its configured list placeholder.
+Every collection entry requires `title`, `description`, and `published` frontmatter. `featured_image` is optional; when it is present, `featured_alt` is required. Entries are sorted newest-first. A standalone `{{ featured-image }}` placeholder places available artwork, while the collection index uses its configured list placeholder.
 
 Set a collection's `indexable` field to `False` to exclude its index and all entries from search indexing and the sitemap.
 

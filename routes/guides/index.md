@@ -7,6 +7,6 @@ description: Practical guides to building and extending a Docklands site.
 
 # Guides for building deliberately.
 
-Start with the complete path through the project, then go deeper where your own website needs more structure.
+Use this section as the project manual. Start with the complete path through the build, then look up routes, collections, images, interactive islands, and publishing as you need them.
 
 {{ guide-list }}

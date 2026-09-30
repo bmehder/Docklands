@@ -66,7 +66,7 @@ description: A small, content-first static-site starter for Gleam, Markdown, Tai
 </section>
 
 <div id='build-widget'>Loading build receipt…</div>
-<script type='module' src='/assets/dispatch.js'></script>
+<script type='module' src='/assets/build_receipt.js'></script>
 
 <section class='closing-panel'>
   <p class='eyebrow'>Start with the source</p>

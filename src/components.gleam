@@ -1,6 +1,7 @@
-import collections.{type Entry, Entry}
+import collections.{type Entry, Entry, FeaturedImage}
 import gleam/int
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/string
 import site
 
@@ -12,21 +13,25 @@ pub fn collection_list(
   let cards =
     entries
     |> list.map(fn(entry) {
-      let Entry(
-        slug:,
-        title:,
-        description:,
-        published:,
-        featured_image:,
-        featured_alt:,
-        ..,
-      ) = entry
+      let Entry(slug:, title:, description:, published:, featured_image:, ..) =
+        entry
+      let image = case featured_image {
+        Some(FeaturedImage(src:, alt:)) ->
+          "<a class='entry-image' href='/"
+          <> route
+          <> "/"
+          <> slug
+          <> "/' tabindex='-1'>
+        <img src='"
+          <> site.escape_html(src)
+          <> "' alt='"
+          <> site.escape_html(alt)
+          <> "' loading='lazy'>
+      </a>"
+        None -> "<!-- No featured image -->"
+      }
       "<article class='entry-card group'>
-      <a class='entry-image' href='/" <> route <> "/" <> slug <> "/' tabindex='-1'>
-        <img src='" <> site.escape_html(featured_image) <> "' alt='" <> site.escape_html(
-        featured_alt,
-      ) <> "' loading='lazy'>
-      </a>
+      " <> image <> "
       <div class='entry-card-copy'>
         " <> published_date(published) <> "
         <h2><a href='/" <> route <> "/" <> slug <> "/'>" <> site.escape_html(
@@ -53,12 +58,13 @@ pub fn entry_meta(
 }
 
 pub fn featured_image(entry: Entry) -> String {
-  let Entry(featured_image:, featured_alt:, ..) = entry
-  "<figure class='featured-image'>
-    <img src='" <> site.escape_html(featured_image) <> "' alt='" <> site.escape_html(
-    featured_alt,
-  ) <> "'>
+  let Entry(featured_image:, ..) = entry
+  case featured_image {
+    Some(FeaturedImage(src:, alt:)) -> "<figure class='featured-image'>
+    <img src='" <> site.escape_html(src) <> "' alt='" <> site.escape_html(alt) <> "'>
   </figure>"
+    None -> ""
+  }
 }
 
 fn published_date(published: String) -> String {

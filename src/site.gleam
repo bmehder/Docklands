@@ -88,7 +88,7 @@ fn header() -> String {
       </a>
       <nav class='desktop-nav' aria-label='Main navigation'>
         <a href='/guides/'>Guides</a>
-        <a href='/dispatches/'>Dispatches</a>
+        <a href='/notes/'>Notes</a>
         <a href='/about/'>About</a>
         " <> github_link() <> "
       </nav>
@@ -98,7 +98,7 @@ fn header() -> String {
           <summary aria-label='Open navigation'>Menu</summary>
           <nav aria-label='Mobile navigation'>
             <a href='/guides/'>Guides</a>
-            <a href='/dispatches/'>Dispatches</a>
+            <a href='/notes/'>Notes</a>
             <a href='/about/'>About</a>
             " <> github_link() <> "
           </nav>

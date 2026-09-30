@@ -1,3 +1,5 @@
+import gleam/option.{type Option}
+
 pub type Collection {
   Collection(
     source_directory: String,
@@ -8,14 +10,17 @@ pub type Collection {
   )
 }
 
+pub type FeaturedImage {
+  FeaturedImage(src: String, alt: String)
+}
+
 pub type Entry {
   Entry(
     slug: String,
     title: String,
     description: String,
     published: String,
-    featured_image: String,
-    featured_alt: String,
+    featured_image: Option(FeaturedImage),
     indexable: Bool,
     markdown: String,
   )
@@ -31,10 +36,10 @@ pub fn all() -> List(Collection) {
       indexable: True,
     ),
     Collection(
-      source_directory: "collections/dispatches",
-      route: "dispatches",
-      placeholder: "{{ dispatch-list }}",
-      item_label: "dispatch",
+      source_directory: "collections/notes",
+      route: "notes",
+      placeholder: "{{ note-list }}",
+      item_label: "note",
       indexable: True,
     ),
   ]

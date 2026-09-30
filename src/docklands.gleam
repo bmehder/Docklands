@@ -1,8 +1,11 @@
-import collections.{type Collection, type Entry, Collection, Entry}
+import collections.{
+  type Collection, type Entry, Collection, Entry, FeaturedImage,
+}
 import components
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/string
 import mork
 import simplifile
@@ -152,16 +155,13 @@ fn load_entry(config: Collection, filename: String) -> Entry {
     parse_document(source)
   let #(frontmatter, _) = mork.split_frontmatter_from_input(source)
   let assert Ok(published) = frontmatter_value(frontmatter, "published")
-  let assert Ok(featured_image) =
-    frontmatter_value(frontmatter, "featured_image")
-  let assert Ok(featured_alt) = frontmatter_value(frontmatter, "featured_alt")
+  let featured_image = parse_featured_image(frontmatter)
   Entry(
     slug:,
     title:,
     description:,
     published:,
     featured_image:,
-    featured_alt:,
     indexable: collection_indexable && indexable,
     markdown:,
   )
@@ -199,13 +199,17 @@ fn build_entry(
     <> "</article>"
   let path = "/" <> route <> "/" <> slug <> "/"
   let Entry(featured_image:, indexable:, ..) = entry
+  let social_image = case featured_image {
+    Some(FeaturedImage(src:, ..)) -> src
+    None -> "/assets/og.png"
+  }
   let html =
     site.page(
       site.Metadata(
         title:,
         description:,
         path:,
-        image: featured_image,
+        image: social_image,
         page_type: "article",
         indexable:,
       ),
@@ -305,11 +309,68 @@ fn expand_components(
   markdown: String,
   replacements: List(#(String, String)),
 ) -> String {
-  replacements
-  |> list.fold(markdown, fn(markdown, replacement) {
-    let #(placeholder, html) = replacement
-    string.replace(markdown, placeholder, html)
-  })
+  markdown
+  |> string.split("\n")
+  |> expand_component_lines(replacements, False)
+  |> string.join("\n")
+}
+
+fn expand_component_lines(
+  lines: List(String),
+  replacements: List(#(String, String)),
+  in_code_block: Bool,
+) -> List(String) {
+  case lines {
+    [] -> []
+    [line, ..rest] -> {
+      let trimmed_line = string.trim(line)
+      case string.starts_with(trimmed_line, "```") {
+        True -> [
+          line,
+          ..expand_component_lines(rest, replacements, !in_code_block)
+        ]
+        False -> {
+          let expanded_line = case in_code_block {
+            True -> line
+            False -> expand_component_line(line, trimmed_line, replacements)
+          }
+          [
+            expanded_line,
+            ..expand_component_lines(rest, replacements, in_code_block)
+          ]
+        }
+      }
+    }
+  }
+}
+
+fn expand_component_line(
+  line: String,
+  trimmed_line: String,
+  replacements: List(#(String, String)),
+) -> String {
+  case
+    list.find_map(replacements, fn(replacement) {
+      let #(placeholder, html) = replacement
+      case trimmed_line == placeholder {
+        True -> Ok(html)
+        False -> Error(Nil)
+      }
+    })
+  {
+    Ok(html) -> html
+    Error(_) -> line
+  }
+}
+
+fn parse_featured_image(frontmatter: String) {
+  case frontmatter_value(frontmatter, "featured_image") {
+    Error(_) -> None
+    Ok(src) -> {
+      let assert Ok(alt) = frontmatter_value(frontmatter, "featured_alt")
+      Some(FeaturedImage(src:, alt:))
+    }
+  }
 }
 
 fn frontmatter_value(frontmatter: String, key: String) -> Result(String, Nil) {
