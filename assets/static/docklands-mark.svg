@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Docklands</title>
+  <rect width="64" height="64" rx="16" fill="#0b171c"/>
+  <path d="M14 18h36M18 18v24M32 18v24M46 18v24" fill="none" stroke="#4fd1c5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M11 46c6-4 12 4 18 0s12 4 18 0 8 0 8 0" fill="none" stroke="#f6ad55" stroke-width="4" stroke-linecap="round"/>
+</svg>

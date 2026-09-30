@@ -1,0 +1,124 @@
+@import "tailwindcss";
+@source "../../src";
+@source "../../routes";
+@source "../../widgets/src";
+@theme { --font-sans: "Avenir Next", Avenir, "Segoe UI", sans-serif; --font-mono: "SFMono-Regular", Consolas, monospace; }
+@layer base {
+  html { scroll-behavior: smooth; background: #071014; }
+  body { background-image: radial-gradient(circle at 80% 0%, rgba(79,209,197,.07), transparent 30rem); }
+  ::selection { background: #4fd1c5; color: #071014; }
+}
+@layer components {
+  .site-header { @apply border-b border-white/10 bg-[#071014]/90 backdrop-blur-xl; }
+  .header-inner { @apply relative mx-auto flex h-[78px] max-w-6xl items-center justify-between px-6 sm:px-8 lg:px-10; }
+  .brand { @apply flex items-center gap-3 text-sm font-semibold tracking-wide text-white; }
+  .brand img { @apply size-9 rounded-xl ring-1 ring-white/10; }
+  .desktop-nav { @apply hidden items-center gap-7 text-sm text-slate-400 sm:flex; }
+  .desktop-nav > a:not(.github-link) { @apply transition hover:text-white; }
+  .header-meta { @apply flex items-center gap-3; }
+  .build-pill { @apply hidden rounded-full border border-teal-300/20 bg-teal-300/5 px-3 py-1.5 font-mono text-[10px] tracking-wide text-teal-200 lg:inline-flex; }
+  .github-link { @apply inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-white/5 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300; }
+  .github-link svg { @apply size-[18px]; }
+  .mobile-menu { @apply sm:hidden; }
+  .mobile-menu summary { @apply cursor-pointer list-none rounded-full border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-200; }
+  .mobile-menu summary::-webkit-details-marker { display: none; }
+  .mobile-menu nav { @apply absolute top-[69px] right-6 left-6 z-20 flex flex-col rounded-2xl border border-white/10 bg-[#0b171c] p-2 text-sm font-medium text-slate-300 shadow-2xl; }
+  .mobile-menu nav > a:not(.github-link) { @apply rounded-xl px-4 py-3 hover:bg-white/5 hover:text-white; }
+  .mobile-menu .github-link { @apply ml-2; }
+  .page-content { @apply mx-auto max-w-6xl px-6 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24; }
+  .page-content > div { @apply w-full; }
+  .page-content h1 { @apply max-w-4xl text-5xl leading-[.98] font-semibold tracking-[-.05em] text-white sm:text-7xl lg:text-[5.2rem]; }
+  .page-content > div > p:not(.eyebrow) { @apply mt-7 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl; }
+  .eyebrow { @apply mb-6 font-mono text-[11px] font-semibold tracking-[.18em] text-teal-300 uppercase; }
+  .section-number { @apply font-mono text-[11px] tracking-[.16em] text-slate-500 uppercase; }
+  .hero { @apply relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b171c] px-6 py-16 sm:px-12 sm:py-20 lg:px-16 lg:py-24; }
+  .hero-grid { @apply pointer-events-none absolute inset-0 -z-10 opacity-30; background-image: linear-gradient(rgba(79,209,197,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(79,209,197,.1) 1px, transparent 1px); background-size: 64px 64px; mask-image: linear-gradient(to bottom left, black, transparent 68%); }
+  .hero h1 em { @apply text-teal-300 not-italic; }
+  .hero-copy { @apply mt-8 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl; }
+  .hero-actions { @apply mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center; }
+  .primary-button { @apply inline-flex items-center gap-3 rounded-full bg-teal-300 px-5 py-3 text-sm font-semibold text-[#071014] shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 hover:bg-teal-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300; }
+  .text-link { @apply px-3 py-2 text-sm font-semibold text-slate-400 transition hover:text-white; }
+  .harbour-line { @apply mt-20 flex h-20 items-end gap-[12%] border-b-2 border-amber-300/80 px-[8%]; }
+  .harbour-line i { @apply block w-1 rounded-t-full bg-teal-300/70; }
+  .harbour-line i:nth-child(1) { height: 45%; } .harbour-line i:nth-child(2) { height: 90%; } .harbour-line i:nth-child(3) { height: 65%; } .harbour-line i:nth-child(4) { height: 35%; }
+  .manifesto { @apply grid gap-10 py-24 sm:py-32 lg:grid-cols-[1fr_3fr]; }
+  .manifesto h2, .output-section h2, .island-intro h2, .closing-panel h2 { @apply max-w-4xl text-4xl leading-tight font-semibold tracking-[-.04em] text-white sm:text-6xl; }
+  .manifesto > div > p { @apply mt-7 max-w-2xl text-lg leading-8 text-slate-400; }
+  .principle-grid { @apply grid overflow-hidden rounded-3xl border border-white/10 md:grid-cols-3; }
+  .principle-grid article { @apply min-h-72 border-white/10 bg-white/[.025] p-7 md:border-l md:first:border-l-0; }
+  .principle-grid article > span { @apply font-mono text-xs text-amber-300; }
+  .principle-grid h3 { @apply mt-20 text-xl font-semibold text-white; }
+  .principle-grid p { @apply mt-4 text-sm leading-6 text-slate-400; }
+  .page-content hr { @apply my-24 border-white/10 sm:my-32; }
+  .output-section > h2, .island-intro h2 { @apply mt-8; }
+  .output-terminal { @apply mt-12 overflow-hidden rounded-3xl border border-white/10 bg-[#020608] shadow-2xl shadow-black/30; }
+  .terminal-bar { @apply flex h-12 items-center gap-2 border-b border-white/10 px-5; }
+  .terminal-bar > span { @apply size-2 rounded-full bg-slate-700; }
+  .terminal-bar > span:first-child { @apply bg-amber-300; }
+  .terminal-bar small { @apply ml-auto font-mono text-[10px] text-slate-500; }
+  .output-terminal pre { @apply overflow-x-auto p-6 font-mono text-xs leading-8 text-slate-400 sm:p-10 sm:text-sm; }
+  .output-terminal b { @apply mr-6 font-normal text-slate-700; }
+  .output-terminal strong { @apply font-normal text-teal-300; }
+  .build-island { @apply mt-12 grid overflow-hidden rounded-3xl border border-white/10 bg-[#0b171c] lg:grid-cols-[1fr_1.05fr]; }
+  .build-island-copy { @apply border-b border-white/10 p-7 sm:p-10 lg:border-r lg:border-b-0; }
+  .island-label { @apply font-mono text-[10px] tracking-[.16em] text-amber-300 uppercase; }
+  .build-island-copy h3 { @apply mt-16 text-3xl font-semibold tracking-tight text-white; }
+  .build-island-copy p { @apply mt-4 max-w-md text-sm leading-6 text-slate-400; }
+  .build-receipt { @apply p-7 sm:p-10; }
+  .receipt-status { @apply flex items-center justify-between border-b border-white/10 pb-6 text-sm text-slate-400; }
+  .receipt-status strong { @apply rounded-full bg-teal-300/10 px-3 py-1 font-mono text-xs text-teal-300; }
+  .receipt-details { @apply mt-6 space-y-3 font-mono text-xs text-slate-300; }
+  .receipt-details li { @apply flex gap-5; }
+  .receipt-details span { @apply text-slate-600; }
+  .receipt-button { @apply mt-8 w-full rounded-full border border-white/10 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-teal-300/40 hover:bg-teal-300/5 hover:text-teal-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300; }
+  .closing-panel { @apply mt-32 rounded-[2rem] bg-teal-300 px-7 py-16 text-[#071014] sm:px-12 sm:py-20; }
+  .closing-panel .eyebrow { @apply text-teal-950; }
+  .closing-panel h2 { @apply text-[#071014]; }
+  .closing-panel > p:not(.eyebrow) { @apply mt-6 max-w-xl text-base leading-7 text-teal-950; }
+  .primary-button.light { @apply mt-8 bg-[#071014] text-white hover:bg-[#102229]; }
+  .page-content > div > h2 { @apply mt-16 max-w-3xl text-4xl leading-tight font-semibold tracking-[-.035em] text-white sm:text-5xl; }
+  .page-content ul, .page-content ol { @apply mt-6 max-w-2xl space-y-3 pl-6 text-base leading-7 text-slate-400; }
+  .page-content ul { @apply list-disc marker:text-teal-300; } .page-content ol { @apply list-decimal marker:text-amber-300; }
+  .content-note { @apply mt-12 max-w-2xl rounded-2xl border border-amber-300/20 bg-amber-300/5 p-6 text-base leading-7 text-slate-300; }
+  .content-note strong { @apply block text-white; }
+  .architecture-map { @apply mt-16 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3; }
+  .architecture-map > div { @apply flex min-h-44 flex-col bg-[#0b171c] p-6; }
+  .architecture-map span { @apply font-mono text-[10px] text-amber-300; }
+  .architecture-map strong { @apply mt-auto font-mono text-lg text-teal-200; }
+  .architecture-map small { @apply mt-2 text-xs text-slate-500; }
+  .closing-link { @apply mt-20 flex flex-col items-start justify-between gap-5 border-t border-white/10 pt-8 text-slate-400 sm:flex-row sm:items-center; }
+  .closing-link a { @apply font-semibold text-teal-300 hover:text-teal-200; }
+  .collection-list { @apply mt-14 grid gap-5 md:grid-cols-2; }
+  .entry-card { @apply flex min-h-64 flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[.025] transition hover:-translate-y-1 hover:border-teal-300/30; }
+  .entry-image { @apply block aspect-[16/8] overflow-hidden bg-[#0b171c]; }
+  .entry-image img { @apply size-full object-cover transition duration-500 group-hover:scale-105; }
+  .entry-card-copy { @apply flex grow flex-col p-7 sm:p-8; }
+  .collection-list h2 { @apply mt-5 text-2xl font-semibold tracking-tight text-white sm:text-3xl; }
+  .collection-list h2 a { @apply transition hover:text-teal-300; }
+  .entry-card-copy > p:not(.published-date) { @apply mt-4 text-sm leading-6 text-slate-400; }
+  .entry-link { @apply mt-auto pt-8 text-sm font-semibold text-teal-300; }
+  .published-date { @apply font-mono text-[10px] tracking-wide text-slate-500 uppercase; }
+  .entry-meta { @apply mb-10 flex items-center justify-between gap-6; }
+  .back-link { @apply text-sm font-semibold text-teal-300 hover:text-teal-200; }
+  .entry-content { @apply max-w-3xl; }
+  .entry-content > p { @apply mt-8 max-w-3xl text-base leading-8 text-slate-400; }
+  .entry-content .published-date { @apply mt-0; }
+  .entry-content > h2 { @apply mt-16 text-3xl font-semibold tracking-tight text-white sm:text-4xl; }
+  .entry-content code { @apply rounded bg-white/5 px-1.5 py-1 font-mono text-sm text-teal-200; }
+  .entry-content pre { @apply mt-8 overflow-x-auto rounded-2xl border border-white/10 bg-[#020608] p-6; }
+  .entry-content pre code { @apply bg-transparent p-0 text-slate-300; }
+  .featured-image { @apply mt-12 mb-16 max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-[#0b171c]; }
+  .featured-image img { @apply aspect-[16/9] w-full object-cover; }
+  .error-page { @apply relative isolate mx-auto flex min-h-[58vh] max-w-4xl flex-col items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b171c] px-6 py-20 text-center sm:px-12; }
+  .error-code { @apply pointer-events-none absolute -top-12 -z-10 text-[13rem] leading-none font-bold tracking-[-.08em] text-white/[.025] select-none sm:-top-24 sm:text-[22rem]; }
+  .error-mark { @apply mb-8 rounded-2xl bg-teal-300/5 p-3 ring-1 ring-teal-300/20; }
+  .error-mark img { @apply size-14 rounded-xl; }
+  .error-page .eyebrow { @apply mb-5; }
+  .error-page h1 { @apply max-w-3xl text-5xl leading-[.98] font-semibold tracking-[-.045em] text-white sm:text-7xl; }
+  .error-page > p:not(.eyebrow) { @apply mt-7 max-w-xl text-lg leading-8 text-slate-400; }
+  .error-actions { @apply mt-9 flex flex-col items-center gap-3 sm:flex-row; }
+  .secondary-button { @apply inline-flex rounded-full px-5 py-3 text-sm font-semibold text-slate-400 hover:bg-white/5 hover:text-white; }
+  .site-footer { @apply mt-8 border-t border-white/10; }
+  .footer-inner { @apply mx-auto flex min-h-[112px] max-w-6xl flex-col items-start justify-between gap-3 px-6 py-8 text-xs text-slate-500 sm:flex-row sm:items-center sm:px-8 lg:px-10; }
+  .footer-inner p:first-child { @apply font-semibold text-slate-300; }
+}
