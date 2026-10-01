@@ -123,13 +123,13 @@ Shortcodes expand to HTML returned by functions in `src/components.gleam` before
 
 ## The Lustre island
 
-Only the homepage loads the widget bundle. Lustre mounts on `#build-widget` and owns that one element; navigation, prose, collection pages, and the rest of the document remain static HTML.
+A small site-wide script reveals the back-to-top control only on long pages after the reader scrolls beyond the first viewport; it scrolls smoothly without changing the URL. Only the homepage loads the widget bundle. Lustre mounts on `#build-widget` and owns that one element; navigation, prose, collection pages, and the rest of the document remain static HTML.
 
 ## Images and favicons
 
 Drop raster source images into `assets/static/images/`. The build recursively writes optimized WebP versions into `dist/assets/images/`, preserving subdirectories.
 
-The custom site icon lives at `assets/static/favicon.svg`. The build derives a 32px PNG and 180px Apple touch icon from it. Removing the custom file activates `assets/default/favicon.svg` as a neutral fallback.
+The primary Docklands mark lives at `assets/static/docklands-mark.svg` and is shared by the site header, 404 page, and this README. A matching favicon master lives at `assets/static/favicon.svg`; the build derives a 32px PNG and 180px Apple touch icon from it. Removing the custom favicon activates `assets/default/favicon.svg` as a neutral fallback.
 
 ## Metadata and discovery
 
@@ -141,7 +141,7 @@ Each build also creates `sitemap.xml`, `robots.txt`, and a non-indexed `404.html
 
 Import the GitHub repository into Vercel with the root directory left as `./` and the Framework Preset set to **Other**. The checked-in `vercel.json` pins the Gleam compiler, runs the generator on Gleam's JavaScript target, and tells Vercel to publish only `dist/`. No environment variables are required.
 
-The normal local build uses Lustre's development tools and therefore requires Erlang. Vercel instead compiles the widget to JavaScript and bundles the small item module with esbuild, avoiding an Erlang installation in the deployment environment.
+The normal local build uses Lustre's development tools and therefore requires Erlang. Vercel instead compiles the widget to JavaScript and bundles the small JavaScript entry module with esbuild, avoiding an Erlang installation in the deployment environment.
 
 Vercel rebuilds and deploys the site whenever the production branch changes. Preview deployments use the same configuration.
 

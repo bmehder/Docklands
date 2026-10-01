@@ -119,6 +119,9 @@
   .error-page > p:not(.eyebrow) { @apply mt-7 max-w-xl text-lg leading-8 text-slate-400; }
   .error-actions { @apply mt-9 flex flex-col items-center gap-3 sm:flex-row; }
   .secondary-button { @apply inline-flex rounded-full px-5 py-3 text-sm font-semibold text-slate-400 hover:bg-white/5 hover:text-white; }
+.back-to-top { @apply fixed right-5 bottom-5 z-30 inline-flex size-11 items-center justify-center rounded-full border border-teal-300/25 bg-[#0b171c]/95 text-teal-200 shadow-xl shadow-black/30 backdrop-blur transition hover:-translate-y-0.5 hover:border-teal-300/50 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300 sm:right-7 sm:bottom-7; }
+.back-to-top[hidden] { display: none; }
+.back-to-top svg { @apply size-5; }
   .site-footer { @apply mt-8 border-t border-white/10; }
   .footer-inner { @apply mx-auto flex min-h-[112px] max-w-6xl flex-col items-start justify-between gap-3 px-6 py-8 text-xs text-slate-500 sm:flex-row sm:items-center sm:px-8 lg:px-10; }
   .footer-inner p:first-child { @apply font-semibold text-slate-300; }

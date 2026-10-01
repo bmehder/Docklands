@@ -26,6 +26,7 @@ pub fn generated_site_test() {
   let sitemap = read_generated_file("dist/sitemap.xml")
   let robots = read_generated_file("dist/robots.txt")
   let copied_logo = read_generated_file("dist/assets/docklands-mark.svg")
+  let back_to_top_script = read_generated_file("dist/assets/back-to-top.js")
 
   assert string.contains(
     home_page,
@@ -63,6 +64,9 @@ pub fn generated_site_test() {
     "Sitemap: https://docklands-ssg.vercel.app/sitemap.xml",
   )
   assert string.contains(copied_logo, "<svg")
+  assert string.contains(home_page, "data-back-to-top")
+  assert string.contains(home_page, "/assets/back-to-top.js")
+  assert string.contains(back_to_top_script, "window.scrollTo")
 }
 
 fn read_generated_file(path: String) -> String {

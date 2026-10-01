@@ -57,7 +57,7 @@ pub fn page(metadata: Metadata, content: String) -> String {
       " <> content <> "
       </div>
     </main>
-    " <> footer() <> "
+    " <> footer() <> back_to_top() <> "
   </body>
 </html>
 "
@@ -134,6 +134,15 @@ fn github_link() -> String {
   "<a class='github-link' href='https://github.com/bmehder/Docklands' target='_blank' rel='noreferrer' aria-label='Docklands on GitHub'>
     <svg viewBox='0 0 24 24' aria-hidden='true'><path fill='currentColor' d='M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.23c-3.23.7-3.91-1.37-3.91-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.58-.29-5.29-1.29-5.29-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.72 5.39-5.31 5.68.42.36.79 1.07.79 2.16v3.21c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z'/></svg>
   </a>"
+}
+
+fn back_to_top() -> String {
+  "<button class='back-to-top' type='button' data-back-to-top aria-label='Back to top' title='Back to top' hidden>
+    <svg viewBox='0 0 24 24' aria-hidden='true'>
+      <path d='m6 10 6-6 6 6M12 4v16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+    </svg>
+  </button>
+  <script src='/assets/back-to-top.js' defer></script>"
 }
 
 fn footer() -> String {
