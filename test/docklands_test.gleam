@@ -37,6 +37,7 @@ pub fn generated_site_test() {
   )
 
   assert !string.contains(guide_index, "{{ guide-list }}")
+  assert !string.contains(guide_index, "<!-- No featured image -->")
   assert string.contains(guide_index, "href='/guides/content-model/'")
 
   assert string.contains(

@@ -1,11 +1,12 @@
 @import "tailwindcss";
 @source "../../src";
-@source "../../routes";
+@source "../../content";
 @source "../../widgets/src";
 @theme { --font-sans: "Avenir Next", Avenir, "Segoe UI", sans-serif; --font-mono: "SFMono-Regular", Consolas, monospace; }
 @layer base {
   html { scroll-behavior: smooth; background: #071014; }
   body { background-image: radial-gradient(circle at 80% 0%, rgba(79,209,197,.07), transparent 30rem); }
+  h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
   ::selection { background: #4fd1c5; color: #071014; }
 }
 @layer components {

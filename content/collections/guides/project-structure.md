@@ -2,9 +2,13 @@
 title: Find your way around the project
 description: Learn which Docklands directory owns content, generation, assets, widgets, and generated output.
 published: 2026-09-29
+featured_image: /assets/images/guide-structure.svg
+featured_alt: A branching project structure connecting one root to three modules
 ---
 
 # Find your way around the project
+
+{{ featured-image }}
 
 Docklands keeps each kind of work in an obvious place. You should rarely need to hunt through the project to answer “where does this belong?”
 

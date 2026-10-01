@@ -2,9 +2,13 @@
 title: Add an interactive island
 description: Use plain JavaScript first, or mount a focused Lustre application without hydrating the site.
 published: 2026-09-25
+featured_image: /assets/images/guide-islands.svg
+featured_alt: A focused teal interface island within a larger dark grid
 ---
 
 # Add an interactive island
+
+{{ featured-image }}
 
 Static HTML is the default. Use plain JavaScript for a small enhancement that does not need an application model. Reach for Lustre when a particular feature benefits from explicit Model, Message, update, and view functions.
 

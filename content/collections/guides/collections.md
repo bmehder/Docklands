@@ -2,9 +2,13 @@
 title: Create and change collections
 description: Add repeatable content types, configure their listings, and understand required and optional item fields.
 published: 2026-09-27
+featured_image: /assets/images/guide-collections.svg
+featured_alt: Four coordinated content cards arranged in a dark grid
 ---
 
 # Create and change collections
+
+{{ featured-image }}
 
 Collections are for content that repeats with a shared shape and presentation. Guides and Notes demonstrate two collections without turning Docklands into a general-purpose CMS.
 

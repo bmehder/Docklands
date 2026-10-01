@@ -2,9 +2,13 @@
 title: Add routes and page metadata
 description: Create standalone pages, understand directory-based URLs, and control metadata and indexing.
 published: 2026-09-28
+featured_image: /assets/images/guide-routes.svg
+featured_alt: A teal route map branching from one path into three pages
 ---
 
 # Add routes and page metadata
+
+{{ featured-image }}
 
 A Markdown file beneath `content/routes/` becomes one HTML file beneath `dist/`. The directory structure is the routing configuration.
 

@@ -2,9 +2,13 @@
 title: Work with assets, images, and icons
 description: Copy static files, optimize raster images during builds, and customize Docklands favicons.
 published: 2026-09-26
+featured_image: /assets/images/guide-assets.svg
+featured_alt: An abstract framed image with teal landscape lines and an amber sun
 ---
 
 # Work with assets, images, and icons
+
+{{ featured-image }}
 
 Files beneath `assets/static/` are copied into `dist/assets/`. That makes the source path predictable while keeping generated output disposable.
 

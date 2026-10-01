@@ -2,9 +2,13 @@
 title: Build, preview, and publish
 description: Run the complete Docklands build, serve its static output locally, and deploy it to a static host.
 published: 2026-09-24
+featured_image: /assets/images/guide-publish.svg
+featured_alt: Three connected build stages ending in an amber deployment node
 ---
 
 # Build, preview, and publish
+
+{{ featured-image }}
 
 Docklands has one complete build command. It generates pages, optimizes images, bundles the optional widget, and compiles the stylesheet.
 
