@@ -53,21 +53,24 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │   ├── css/site.css             # Tailwind source and site styles
 │   ├── default/favicon.svg      # Neutral fallback icon
 │   └── static/                  # Copied assets and image sources
-├── collections/
-│   ├── guides/                  # Practical documentation items
-│   └── notes/                   # Short architectural notes
-├── routes/                      # Markdown tree mirrored into dist/
-│   ├── index.md
-│   ├── 404.md
-│   ├── about/index.md
-│   ├── guides/index.md
-│   └── notes/index.md
+├── content/                     # Author-written Markdown
+│   ├── collections/
+│   │   ├── guides/              # Practical documentation items
+│   │   └── notes/               # Short architectural notes
+│   └── routes/                  # Markdown tree mirrored into dist/
+│       ├── index.md
+│       ├── 404.md
+│       ├── about/index.md
+│       ├── guides/index.md
+│       └── notes/index.md
 ├── scripts/optimize-images.mjs
 ├── src/
 │   ├── collections.gleam        # Collection definitions and item types
 │   ├── components.gleam         # Reusable static HTML blocks
 │   ├── docklands.gleam          # Markdown rendering and file generation
 │   └── site.gleam               # Shared document layout and navigation
+├── test/
+│   └── docklands_test.gleam   # Generated-output regression tests
 ├── widgets/
 │   ├── build_receipt_entry.mjs  # Vercel widget-bundle entry point
 │   └── src/build_receipt.gleam  # Isolated Lustre build-receipt island
@@ -90,7 +93,7 @@ The final `dist/` directory can be served by any static host.
 
 ## Routes and frontmatter
 
-A route's location determines its URL. For example, `routes/studio/index.md` becomes `/studio/`. Every page requires:
+A route's location determines its URL. For example, `content/routes/studio/index.md` becomes `/studio/`. Every page requires:
 
 ```yaml
 ---

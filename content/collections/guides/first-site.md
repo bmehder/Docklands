@@ -14,10 +14,10 @@ The shortest way to understand Docklands is to follow one page through the build
 
 ## Begin with a route
 
-Create an `index.md` file beneath `routes/`. Its directory becomes the public URL, while its title and description become document metadata.
+Create an `index.md` file beneath `content/routes/`. Its directory becomes the public URL, while its title and description become document metadata.
 
 ```text
-routes/
+content/routes/
 └── studio/
     └── index.md
 ```

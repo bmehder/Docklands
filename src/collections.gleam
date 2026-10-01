@@ -29,14 +29,14 @@ pub type Item {
 pub fn all() -> List(Collection) {
   [
     Collection(
-      source_directory: "collections/guides",
+      source_directory: "content/collections/guides",
       route: "guides",
       shortcode: "{{ guide-list }}",
       item_label: "guide",
       indexable: True,
     ),
     Collection(
-      source_directory: "collections/notes",
+      source_directory: "content/collections/notes",
       route: "notes",
       shortcode: "{{ note-list }}",
       item_label: "note",

@@ -8,13 +8,14 @@ published: 2026-09-29
 
 Docklands keeps each kind of work in an obvious place. You should rarely need to hunt through the project to answer “where does this belong?”
 
-## The five working areas
+## The working areas
 
-- `routes/` contains standalone pages and collection index pages.
-- `collections/` contains repeatable items such as guides and notes.
+- `content/` contains author-written Markdown. Its `routes/` directory holds standalone pages and collection indexes; its `collections/` directory holds repeatable items such as guides and notes.
 - `src/` contains the Gleam generator, shared layout, configuration, and reusable HTML components.
 - `assets/` contains stylesheet source, files copied as-is, and raster images optimized during the build.
 - `widgets/` is a separate Gleam project for optional browser-side Lustre islands.
+- `scripts/` contains supporting build steps that do not belong in the generator.
+- `test/` verifies the generated output and important URL behaviour.
 
 The generated `dist/` directory is output, not source. Delete it, rebuild it, or deploy it, but do not edit it by hand—the next build replaces it.
 
@@ -24,4 +25,4 @@ Markdown owns page content. Gleam owns repeated structure and generation. CSS ow
 
 ## Start with the smallest relevant file
 
-For a copy change, begin in `routes/` or `collections/`. For shared navigation or metadata, begin in `src/site.gleam`. For a repeated content block, look in `src/components.gleam`. Move into build code only when the behaviour truly applies across the site.
+For a copy change, begin in `content/routes/` or `content/collections/`. For shared navigation or metadata, begin in `src/site.gleam`. For a repeated content block, look in `src/components.gleam`. Move into build code only when the behaviour truly applies across the site.

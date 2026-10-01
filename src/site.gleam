@@ -64,23 +64,19 @@ pub fn page(metadata: Metadata, content: String) -> String {
 }
 
 pub fn absolute_url(reference: String) -> String {
-  let reference_uri = parse_uri(reference)
+  let assert Ok(reference_uri) = uri.parse(reference)
 
   case reference_uri {
     Uri(scheme: Some(_), ..) -> uri.to_string(reference_uri)
     Uri(..) -> {
-      let assert Ok(absolute_uri) =
-        uri.merge(parse_uri(base_url), reference_uri)
+      let assert Ok(base_uri) = uri.parse(base_url)
+      let assert Ok(absolute_uri) = uri.merge(base_uri, reference_uri)
+
       absolute_uri
       |> preserve_trailing_slash(from: reference_uri)
       |> uri.to_string
     }
   }
-}
-
-fn parse_uri(value: String) -> Uri {
-  let assert Ok(parsed_uri) = uri.parse(value)
-  parsed_uri
 }
 
 fn preserve_trailing_slash(absolute: Uri, from reference: Uri) -> Uri {

@@ -10,8 +10,8 @@ description: How Docklands combines Gleam, Markdown, Tailwind CSS, and isolated 
 Docklands is a reference project rather than a generalized static-site framework. Its structure is deliberately direct enough to inspect without first learning an internal platform.
 
 <div class='architecture-map'>
-  <div><span>01</span><strong>routes/</strong><small>Standalone Markdown pages</small></div>
-  <div><span>02</span><strong>collections/</strong><small>Repeatable dated content</small></div>
+  <div><span>01</span><strong>content/routes/</strong><small>Standalone Markdown pages</small></div>
+  <div><span>02</span><strong>content/collections/</strong><small>Repeatable dated content</small></div>
   <div><span>03</span><strong>src/</strong><small>Gleam layout and generation</small></div>
   <div><span>04</span><strong>assets/</strong><small>Styles, images, and brand files</small></div>
   <div><span>05</span><strong>widgets/</strong><small>Optional Lustre islands</small></div>

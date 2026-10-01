@@ -9,6 +9,8 @@ import mork
 import simplifile
 import site
 
+const routes_directory = "content/routes"
+
 type Document {
   Document(
     title: String,
@@ -73,7 +75,7 @@ fn item_count(loaded_collections: List(LoadedCollection)) -> Int {
 // Routes
 
 fn load_routes() -> List(String) {
-  let assert Ok(files) = simplifile.get_files(in: "routes")
+  let assert Ok(files) = simplifile.get_files(in: routes_directory)
 
   files
   |> list.filter(string.ends_with(_, ".md"))
@@ -90,7 +92,7 @@ fn build_route(
   let Document(title:, description:, indexable:, markdown:) =
     parse_document(source_markdown)
 
-  let relative_path = string.drop_start(source_path, 7)
+  let relative_path = route_relative_path(source_path)
   let output_path = "dist/" <> string.drop_end(relative_path, 3) <> ".html"
   let output_directory = output_directory(output_path)
 
@@ -117,6 +119,10 @@ fn build_route(
   let assert Ok(Nil) = simplifile.create_directory_all(output_directory)
   let assert Ok(Nil) = simplifile.write(to: output_path, contents: html)
   Nil
+}
+
+fn route_relative_path(source_path: String) -> String {
+  string.drop_start(source_path, string.length(routes_directory) + 1)
 }
 
 fn route_path(relative_path: String) -> String {
@@ -301,10 +307,10 @@ fn write_discovery_files(
 
       let Document(indexable:, ..) = parse_document(contents)
 
-      let path = route_path(string.drop_start(source, 7))
+      let path = route_path(route_relative_path(source))
       indexable && route_is_indexable(path, loaded_collections)
     })
-    |> list.map(fn(source) { route_path(string.drop_start(source, 7)) })
+    |> list.map(fn(source) { route_path(route_relative_path(source)) })
     |> list.map(sitemap_url(_, None))
 
   let item_urls =

@@ -6,11 +6,11 @@ published: 2026-09-28
 
 # Add routes and page metadata
 
-A Markdown file beneath `routes/` becomes one HTML file beneath `dist/`. The directory structure is the routing configuration.
+A Markdown file beneath `content/routes/` becomes one HTML file beneath `dist/`. The directory structure is the routing configuration.
 
 ## Choose the URL with folders
 
-`routes/index.md` becomes `/`. `routes/about/index.md` becomes `/about/`. `routes/uses/index.md` becomes `/uses/`. There is no separate router table and no client-side router.
+`content/routes/index.md` becomes `/`. `content/routes/about/index.md` becomes `/about/`. `content/routes/uses/index.md` becomes `/uses/`. There is no separate router table and no client-side router.
 
 ## Supply the required metadata
 

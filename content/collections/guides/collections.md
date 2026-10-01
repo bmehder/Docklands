@@ -12,7 +12,7 @@ Collections are for content that repeats with a shared shape and presentation. G
 
 Add a `Collection` value in `src/collections.gleam`. It specifies the source directory, public route, shortcode, singular item label, and whether the collection is indexable.
 
-Then add an index route such as `routes/notes/index.md`. Put its configured shortcode on a line by itself where the cards should appear.
+Then add an index route such as `content/routes/notes/index.md`. Put its configured shortcode on a line by itself where the cards should appear.
 
 ## Write items
 
