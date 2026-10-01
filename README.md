@@ -66,8 +66,10 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 ├── scripts/optimize-images.mjs
 ├── src/
 │   ├── collections.gleam        # Collection definitions and item types
+│   ├── content.gleam            # Frontmatter, documents, and shortcodes
 │   ├── components.gleam         # Reusable static HTML blocks
-│   ├── docklands.gleam          # Markdown rendering and file generation
+│   ├── docklands.gleam          # Top-level build orchestration
+│   ├── generator.gleam          # Route, collection, tag, and discovery output
 │   └── site.gleam               # Shared document layout and navigation
 ├── test/
 │   └── docklands_test.gleam   # Generated-output regression tests

@@ -25,7 +25,7 @@ Most website changes begin in one of three places:
 
 The remaining working directories explain how Docklands turns those inputs into a website:
 
-- `src/` contains the Gleam generator, shared layout, collection configuration, and reusable HTML components.
+- `src/` contains the small Gleam build pipeline. `docklands.gleam` is the top-level recipe, `content.gleam` parses frontmatter and shortcodes, and `generator.gleam` writes routes, collection items, tags, and discovery files. The neighbouring modules define collections, reusable HTML components, and the shared page layout.
 - `scripts/` contains supporting build steps that do not belong in the generator.
 - `test/` verifies the generated output and important URL behaviour.
 
@@ -37,4 +37,4 @@ Markdown owns page content. Gleam owns repeated structure and generation. CSS ow
 
 ## Start with the smallest relevant file
 
-For a copy change, begin in `content/routes/` or `content/collections/`. For shared navigation or metadata, begin in `src/site.gleam`. For a repeated content block, look in `src/components.gleam`. Move into build code only when the behaviour truly applies across the site.
+For a copy change, begin in `content/routes/` or `content/collections/`. For shared navigation or metadata, begin in `src/site.gleam`. For a repeated content block, look in `src/components.gleam`. Parsing conventions belong in `src/content.gleam`; generated page behaviour belongs in `src/generator.gleam`. Move into build code only when the behaviour truly applies across the site.
