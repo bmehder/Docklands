@@ -12,12 +12,19 @@ featured_alt: A branching project structure connecting one root to three modules
 
 Docklands keeps each kind of work in an obvious place. You should rarely need to hunt through the project to answer “where does this belong?”
 
-## The working areas
+## Website authoring
 
-- `content/` contains author-written Markdown. Its `routes/` directory holds standalone pages and collection indexes; its `collections/` directory holds repeatable items such as guides and notes.
-- `src/` contains the Gleam generator, shared layout, configuration, and reusable HTML components.
+Most website changes begin in one of three places:
+
+- `content/` contains Markdown. Its `routes/` directory holds standalone pages and collection indexes; its `collections/` directory holds repeatable items such as guides and notes.
 - `assets/` contains stylesheet source, files copied as-is, and raster images optimized during the build.
 - `widgets/` is a separate Gleam project for optional browser-side Lustre islands.
+
+## Website generation
+
+The remaining working directories explain how Docklands turns those inputs into a website:
+
+- `src/` contains the Gleam generator, shared layout, collection configuration, and reusable HTML components.
 - `scripts/` contains supporting build steps that do not belong in the generator.
 - `test/` verifies the generated output and important URL behaviour.
 

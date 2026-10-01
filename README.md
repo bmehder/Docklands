@@ -78,7 +78,12 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 └── dist/                        # Generated site; not committed
 ```
 
-The root project targets Erlang for filesystem-based generation. The separate `widgets/` project targets JavaScript, keeping browser-only dependencies away from the static builder.
+For ordinary website work, think of the directories in two groups:
+
+- **Website authoring:** `content/`, `assets/`, and—when interactivity is useful—`widgets/`.
+- **Website generation:** `src/`, `scripts/`, and `test/`.
+
+The remaining root files configure Gleam, npm, Git, and Vercel. The root project targets Erlang for filesystem-based generation. The separate `widgets/` project targets JavaScript, keeping browser-only dependencies away from the static builder.
 
 ## Build pipeline
 
