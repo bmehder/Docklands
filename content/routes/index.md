@@ -41,10 +41,59 @@ description: A small, content-first static-site starter for Gleam, Markdown, Tai
   </article>
 </div>
 
+<section class='feature-section' id='features'>
+  <div class='feature-heading'>
+    <p class='section-number'>02 / Features</p>
+    <div>
+      <h2>The useful parts are already connected.</h2>
+      <p>Docklands provides the small amount of structure a content-led site tends to need, while leaving the result as ordinary HTML, CSS, images, and deliberately chosen JavaScript.</p>
+    </div>
+  </div>
+
+  <div class='feature-grid'>
+    <article>
+      <span>Content</span>
+      <h3>Markdown with an escape hatch</h3>
+      <p>Write readable Markdown for most content and drop into raw HTML whenever a page needs a more deliberate layout.</p>
+      <a href='/guides/content-model/'>Explore the content model <span aria-hidden='true'>→</span></a>
+    </article>
+    <article>
+      <span>Routes</span>
+      <h3>Folders become clean URLs</h3>
+      <p>Directory-based routes, frontmatter, per-page descriptions, and indexing controls keep page behaviour visible beside the content.</p>
+      <a href='/guides/routes-and-frontmatter/'>Understand routes <span aria-hidden='true'>→</span></a>
+    </article>
+    <article>
+      <span>Collections</span>
+      <h3>Repeatable content, typed in Gleam</h3>
+      <p>Define collections once, turn Markdown files into typed items, and place generated lists in pages with shortcodes.</p>
+      <a href='/guides/collections/'>Build a collection <span aria-hidden='true'>→</span></a>
+    </article>
+    <article>
+      <span>Assets</span>
+      <h3>Images prepared at build time</h3>
+      <p>Static files are copied as-is, raster images become web-friendly WebP files, and favicon variants are generated for you.</p>
+      <a href='/guides/assets-and-images/'>Manage images and icons <span aria-hidden='true'>→</span></a>
+    </article>
+    <article>
+      <span>Discovery</span>
+      <h3>Metadata without repetition</h3>
+      <p>The shared layout produces canonical links, social metadata, a sitemap, robots.txt, and a proper static 404 page.</p>
+      <a href='/guides/build-and-publish/'>See what gets built <span aria-hidden='true'>→</span></a>
+    </article>
+    <article>
+      <span>Interactivity</span>
+      <h3>JavaScript stays optional</h3>
+      <p>Use plain JavaScript for small enhancements or mount a Lustre application into one explicit island when state earns its keep.</p>
+      <a href='/guides/interactive-islands/'>Add an island <span aria-hidden='true'>→</span></a>
+    </article>
+  </div>
+</section>
+
 ---
 
 <section class='output-section'>
-  <p class='section-number'>02 / Output</p>
+  <p class='section-number'>03 / Output</p>
   <h2>Nothing mysterious reaches production.</h2>
   <div class='output-terminal'>
     <div class='terminal-bar'><span></span><span></span><span></span><small>npm run build</small></div>
@@ -61,7 +110,7 @@ description: A small, content-first static-site starter for Gleam, Markdown, Tai
 ---
 
 <section class='island-intro'>
-  <p class='section-number'>03 / One island</p>
+  <p class='section-number'>04 / One island</p>
   <h2>Interactive where useful.<br>Static everywhere else.</h2>
 </section>
 

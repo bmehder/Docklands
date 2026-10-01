@@ -36,6 +36,9 @@ pub fn generated_site_test() {
     home_page,
     "<script type='module' src='/assets/build_receipt.js'></script>",
   )
+  assert string.contains(home_page, "id='features'")
+  assert string.contains(home_page, "href='/guides/collections/'")
+  assert string.contains(home_page, "Metadata without repetition")
 
   assert !string.contains(guide_index, "{{ guide-list }}")
   assert !string.contains(guide_index, "<!-- No featured image -->")

@@ -50,6 +50,16 @@
   .principle-grid article > span { @apply font-mono text-xs text-amber-300; }
   .principle-grid h3 { @apply mt-20 text-xl font-semibold text-white; }
   .principle-grid p { @apply mt-4 text-sm leading-6 text-slate-400; }
+  .feature-section { @apply pt-24 sm:pt-32; }
+  .feature-heading { @apply grid gap-10 lg:grid-cols-[1fr_3fr]; }
+  .feature-heading h2 { @apply max-w-4xl text-4xl leading-tight font-semibold tracking-[-.04em] text-white sm:text-6xl; }
+  .feature-heading > div > p { @apply mt-7 max-w-2xl text-lg leading-8 text-slate-400; }
+  .feature-grid { @apply mt-14 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3; }
+  .feature-grid article { @apply flex min-h-80 flex-col bg-[#0b171c] p-7 sm:p-8; }
+  .feature-grid article > span { @apply font-mono text-[10px] tracking-[.14em] text-amber-300 uppercase; }
+  .feature-grid h3 { @apply mt-12 text-2xl font-semibold tracking-tight text-white; }
+  .feature-grid p { @apply mt-4 text-sm leading-6 text-slate-400; }
+  .feature-grid a { @apply mt-auto pt-8 text-sm font-semibold text-teal-300 transition hover:text-teal-200; }
   .page-content hr { @apply my-24 border-white/10 sm:my-32; }
   .output-section > h2, .island-intro h2 { @apply mt-8; }
   .output-terminal { @apply mt-12 overflow-hidden rounded-3xl border border-white/10 bg-[#020608] shadow-2xl shadow-black/30; }
