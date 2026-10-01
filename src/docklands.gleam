@@ -1,11 +1,9 @@
-import collections.{
-  type Collection, type Entry, Collection, Entry, FeaturedImage,
-}
+import collections.{type Collection, type Item, Collection, FeaturedImage, Item}
 import components
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/string
 import mork
 import simplifile
@@ -21,29 +19,36 @@ type Document {
 }
 
 type LoadedCollection {
-  LoadedCollection(config: Collection, entries: List(Entry))
+  LoadedCollection(collection: Collection, items: List(Item))
+}
+
+type Shortcode {
+  Shortcode(marker: String, html: String)
 }
 
 pub fn main() -> Nil {
   prepare_output()
-  let collections = collections.all() |> list.map(load_collection)
-  let collection_replacements = collections |> list.map(collection_replacement)
-  let replacements = collection_replacements
-  let routes = load_routes()
 
-  list.each(routes, build_route(_, replacements, collections))
-  list.each(collections, build_collection(_, replacements))
-  write_discovery_files(routes, collections)
+  let loaded_collections = collections.all() |> list.map(load_collection)
+  let shortcodes = loaded_collections |> list.map(collection_shortcode)
+
+  let route_sources = load_routes()
+
+  list.each(route_sources, build_route(_, shortcodes, loaded_collections))
+  list.each(loaded_collections, build_collection(_, shortcodes))
+  write_discovery_files(route_sources, loaded_collections)
   copy_static_assets()
 
   io.println(
     "Generated "
-    <> int.to_string(list.length(routes))
+    <> int.to_string(list.length(route_sources))
     <> " routes, "
-    <> int.to_string(entry_count(collections))
-    <> " collection entries, and static assets in dist/",
+    <> int.to_string(item_count(loaded_collections))
+    <> " collection items, and static assets in dist/",
   )
 }
+
+// Output setup
 
 fn prepare_output() -> Nil {
   let assert Ok(Nil) = simplifile.create_directory_all("dist")
@@ -57,6 +62,16 @@ fn copy_static_assets() -> Nil {
   Nil
 }
 
+fn item_count(loaded_collections: List(LoadedCollection)) -> Int {
+  loaded_collections
+  |> list.fold(0, fn(total, loaded_collection) {
+    let LoadedCollection(items:, ..) = loaded_collection
+    total + list.length(items)
+  })
+}
+
+// Routes
+
 fn load_routes() -> List(String) {
   let assert Ok(files) = simplifile.get_files(in: "routes")
 
@@ -66,19 +81,25 @@ fn load_routes() -> List(String) {
 }
 
 fn build_route(
-  source: String,
-  replacements: List(#(String, String)),
+  source_path: String,
+  shortcodes: List(Shortcode),
   loaded_collections: List(LoadedCollection),
 ) -> Nil {
-  let assert Ok(document) = simplifile.read(from: source)
+  let assert Ok(source_markdown) = simplifile.read(from: source_path)
+
   let Document(title:, description:, indexable:, markdown:) =
-    parse_document(document)
-  let relative_path = string.drop_start(source, 7)
-  let output = "dist/" <> string.drop_end(relative_path, 3) <> ".html"
-  let output_directory = output_directory(output)
+    parse_document(source_markdown)
+
+  let relative_path = string.drop_start(source_path, 7)
+  let output_path = "dist/" <> string.drop_end(relative_path, 3) <> ".html"
+  let output_directory = output_directory(output_path)
 
   let content =
-    markdown |> expand_components(replacements) |> mork.parse |> mork.to_html
+    markdown
+    |> expand_shortcodes(shortcodes)
+    |> mork.parse
+    |> mork.to_html
+
   let path = route_path(relative_path)
   let html =
     site.page(
@@ -94,7 +115,7 @@ fn build_route(
     )
 
   let assert Ok(Nil) = simplifile.create_directory_all(output_directory)
-  let assert Ok(Nil) = simplifile.write(to: output, contents: html)
+  let assert Ok(Nil) = simplifile.write(to: output_path, contents: html)
   Nil
 }
 
@@ -110,99 +131,144 @@ fn route_is_indexable(
   path: String,
   loaded_collections: List(LoadedCollection),
 ) -> Bool {
-  case path == "/404.html" {
-    True -> False
-    False ->
+  case path {
+    "/404.html" -> False
+    _ ->
       loaded_collections
-      |> list.fold(True, fn(indexable, loaded) {
+      |> list.all(fn(loaded_collection) {
         let LoadedCollection(
-          config: Collection(route:, indexable: collection_indexable, ..),
+          collection: Collection(route:, indexable: collection_is_indexable, ..),
           ..,
-        ) = loaded
-        indexable && { path != "/" <> route <> "/" || collection_indexable }
+        ) = loaded_collection
+
+        let is_collection_index = path == "/" <> route <> "/"
+
+        case is_collection_index {
+          True -> collection_is_indexable
+          False -> True
+        }
       })
   }
 }
 
-fn output_directory(output: String) -> String {
-  let parts = string.split(output, on: "/")
+fn output_directory(output_path: String) -> String {
+  let parts = string.split(output_path, on: "/")
+
   parts
   |> list.take(list.length(parts) - 1)
   |> string.join("/")
 }
 
-fn load_collection(config: Collection) -> LoadedCollection {
-  let Collection(source_directory:, ..) = config
+// Collections
+
+fn load_collection(collection: Collection) -> LoadedCollection {
+  let Collection(source_directory:, ..) = collection
   let assert Ok(filenames) = simplifile.read_directory(at: source_directory)
 
-  let entries =
+  let items =
     filenames
     |> list.filter(string.ends_with(_, ".md"))
     |> list.sort(string.compare)
-    |> list.map(load_entry(config, _))
+    |> list.map(load_item(collection, _))
     |> list.sort(by: newest_first)
 
-  LoadedCollection(config:, entries:)
+  LoadedCollection(collection:, items:)
 }
 
-fn load_entry(config: Collection, filename: String) -> Entry {
-  let Collection(source_directory:, indexable: collection_indexable, ..) =
-    config
-  let assert Ok(source) =
-    simplifile.read(from: source_directory <> "/" <> filename)
-  let slug = string.drop_end(filename, 3)
+fn load_item(collection: Collection, source_filename: String) -> Item {
+  let Collection(source_directory:, indexable: collection_is_indexable, ..) =
+    collection
+
+  let assert Ok(source_markdown) =
+    simplifile.read(from: source_directory <> "/" <> source_filename)
+
+  let slug = string.drop_end(source_filename, 3)
+
   let Document(title:, description:, indexable:, markdown:) =
-    parse_document(source)
-  let #(frontmatter, _) = mork.split_frontmatter_from_input(source)
+    parse_document(source_markdown)
+
+  let #(frontmatter, _) = mork.split_frontmatter_from_input(source_markdown)
+
   let assert Ok(published) = frontmatter_value(frontmatter, "published")
   let featured_image = parse_featured_image(frontmatter)
-  Entry(
+
+  Item(
     slug:,
     title:,
     description:,
     published:,
     featured_image:,
-    indexable: collection_indexable && indexable,
+    indexable: collection_is_indexable && indexable,
     markdown:,
   )
 }
 
-fn build_collection(
-  loaded: LoadedCollection,
-  replacements: List(#(String, String)),
-) -> Nil {
-  let LoadedCollection(config:, entries:) = loaded
-  list.each(entries, build_entry(config, _, replacements))
+fn newest_first(first_item: Item, second_item: Item) {
+  let Item(published: first_date, ..) = first_item
+  let Item(published: second_date, ..) = second_item
+
+  string.compare(second_date, first_date)
 }
 
-fn build_entry(
-  config: Collection,
-  entry: Entry,
-  replacements: List(#(String, String)),
+fn collection_shortcode(loaded_collection: LoadedCollection) -> Shortcode {
+  let LoadedCollection(
+    collection: Collection(route:, shortcode:, item_label:, ..),
+    items:,
+  ) = loaded_collection
+
+  Shortcode(
+    marker: shortcode,
+    html: components.collection_list(route, item_label, items),
+  )
+}
+
+fn build_collection(
+  loaded_collection: LoadedCollection,
+  shortcodes: List(Shortcode),
 ) -> Nil {
-  let Collection(route:, item_label:, ..) = config
-  let Entry(slug:, title:, description:, published:, markdown:, ..) = entry
+  let LoadedCollection(collection:, items:) = loaded_collection
+
+  list.each(items, build_item(collection, _, shortcodes))
+}
+
+fn build_item(
+  collection: Collection,
+  item: Item,
+  shortcodes: List(Shortcode),
+) -> Nil {
+  let Collection(route:, item_label:, ..) = collection
+
+  let Item(slug:, title:, description:, published:, markdown:, ..) = item
+
   let output_directory = "dist/" <> route <> "/" <> slug
-  let entry_replacements = [
-    #("{{ featured-image }}", components.featured_image(entry)),
-    ..replacements
+  let item_shortcodes = [
+    Shortcode(
+      marker: "{{ featured-image }}",
+      html: components.featured_image(item),
+    ),
+    ..shortcodes
   ]
-  let entry_html =
+
+  let item_html =
     markdown
-    |> expand_components(entry_replacements)
+    |> expand_shortcodes(item_shortcodes)
     |> mork.parse
     |> mork.to_html
+
   let content =
-    "<article class='entry-content'>"
-    <> components.entry_meta(route, item_label, published)
-    <> entry_html
+    "<article class='item-content'>"
+    <> components.item_meta(route, item_label, published)
+    <> item_html
     <> "</article>"
+
   let path = "/" <> route <> "/" <> slug <> "/"
-  let Entry(featured_image:, indexable:, ..) = entry
+
+  let Item(featured_image:, indexable:, ..) = item
   let social_image = case featured_image {
     Some(FeaturedImage(src:, ..)) -> src
     None -> "/assets/og.png"
   }
+
   let html =
     site.page(
       site.Metadata(
@@ -222,145 +288,94 @@ fn build_entry(
   Nil
 }
 
+// Discovery files
+
 fn write_discovery_files(
-  routes: List(String),
+  route_sources: List(String),
   loaded_collections: List(LoadedCollection),
 ) -> Nil {
   let route_urls =
-    routes
+    route_sources
     |> list.filter(fn(source) {
       let assert Ok(contents) = simplifile.read(from: source)
+
       let Document(indexable:, ..) = parse_document(contents)
+
       let path = route_path(string.drop_start(source, 7))
       indexable && route_is_indexable(path, loaded_collections)
     })
     |> list.map(fn(source) { route_path(string.drop_start(source, 7)) })
-    |> list.map(sitemap_url(_, ""))
-  let entry_urls =
+    |> list.map(sitemap_url(_, None))
+
+  let item_urls =
     loaded_collections
-    |> list.flat_map(fn(loaded) {
-      let LoadedCollection(config: Collection(route:, ..), entries:) = loaded
-      entries
-      |> list.filter(fn(entry) {
-        let Entry(indexable:, ..) = entry
+    |> list.flat_map(fn(loaded_collection) {
+      let LoadedCollection(collection: Collection(route:, ..), items:) =
+        loaded_collection
+
+      items
+      |> list.filter(fn(item) {
+        let Item(indexable:, ..) = item
+
         indexable
       })
-      |> list.map(fn(entry) {
-        let Entry(slug:, published:, ..) = entry
-        sitemap_url("/" <> route <> "/" <> slug <> "/", published)
+      |> list.map(fn(item) {
+        let Item(slug:, published:, ..) = item
+
+        sitemap_url("/" <> route <> "/" <> slug <> "/", Some(published))
       })
     })
+
+  let sitemap_entries =
+    list.append(route_urls, item_urls)
+    |> string.join("\n")
+
   let sitemap =
-    "<?xml version='1.0' encoding='UTF-8'?>\n<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>\n"
-    <> string.join(list.append(route_urls, entry_urls), "\n")
+    "<?xml version='1.0' encoding='UTF-8'?>\n"
+    <> "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>\n"
+    <> sitemap_entries
     <> "\n</urlset>\n"
+
+  let sitemap_location = site.absolute_url("/sitemap.xml")
+
   let robots =
-    "User-agent: *\nAllow: /\n\nSitemap: " <> site.base_url <> "/sitemap.xml\n"
+    "User-agent: *\n"
+    <> "Allow: /\n\n"
+    <> "Sitemap: "
+    <> sitemap_location
+    <> "\n"
+
   let assert Ok(Nil) =
     simplifile.write(to: "dist/sitemap.xml", contents: sitemap)
+
   let assert Ok(Nil) = simplifile.write(to: "dist/robots.txt", contents: robots)
   Nil
 }
 
-fn sitemap_url(path: String, last_modified: String) -> String {
-  let lastmod = case last_modified {
-    "" -> ""
-    date -> "\n    <lastmod>" <> date <> "</lastmod>"
+fn sitemap_url(path: String, last_modified: Option(String)) -> String {
+  let last_modified_xml = case last_modified {
+    None -> ""
+    Some(date) -> "\n    <lastmod>" <> date <> "</lastmod>"
   }
+
   "  <url>\n    <loc>"
-  <> site.base_url
-  <> path
+  <> site.absolute_url(path)
   <> "</loc>"
-  <> lastmod
+  <> last_modified_xml
   <> "\n  </url>"
 }
 
-fn collection_replacement(loaded: LoadedCollection) -> #(String, String) {
-  let LoadedCollection(
-    config: Collection(route:, placeholder:, item_label:, ..),
-    entries:,
-  ) = loaded
-  #(placeholder, components.collection_list(route, item_label, entries))
-}
-
-fn entry_count(collections: List(LoadedCollection)) -> Int {
-  collections
-  |> list.fold(0, fn(total, loaded) {
-    let LoadedCollection(entries:, ..) = loaded
-    total + list.length(entries)
-  })
-}
-
-fn newest_first(a: Entry, b: Entry) {
-  let Entry(published: a_date, ..) = a
-  let Entry(published: b_date, ..) = b
-  string.compare(b_date, a_date)
-}
+// Markdown and frontmatter
 
 fn parse_document(source: String) -> Document {
   let #(frontmatter, markdown) = mork.split_frontmatter_from_input(source)
+
   let assert Ok(title) = frontmatter_value(frontmatter, "title")
   let assert Ok(description) = frontmatter_value(frontmatter, "description")
+
   let indexable = !frontmatter_flag(frontmatter, "noindex")
+
   Document(title:, description:, indexable:, markdown:)
-}
-
-fn expand_components(
-  markdown: String,
-  replacements: List(#(String, String)),
-) -> String {
-  markdown
-  |> string.split("\n")
-  |> expand_component_lines(replacements, False)
-  |> string.join("\n")
-}
-
-fn expand_component_lines(
-  lines: List(String),
-  replacements: List(#(String, String)),
-  in_code_block: Bool,
-) -> List(String) {
-  case lines {
-    [] -> []
-    [line, ..rest] -> {
-      let trimmed_line = string.trim(line)
-      case string.starts_with(trimmed_line, "```") {
-        True -> [
-          line,
-          ..expand_component_lines(rest, replacements, !in_code_block)
-        ]
-        False -> {
-          let expanded_line = case in_code_block {
-            True -> line
-            False -> expand_component_line(line, trimmed_line, replacements)
-          }
-          [
-            expanded_line,
-            ..expand_component_lines(rest, replacements, in_code_block)
-          ]
-        }
-      }
-    }
-  }
-}
-
-fn expand_component_line(
-  line: String,
-  trimmed_line: String,
-  replacements: List(#(String, String)),
-) -> String {
-  case
-    list.find_map(replacements, fn(replacement) {
-      let #(placeholder, html) = replacement
-      case trimmed_line == placeholder {
-        True -> Ok(html)
-        False -> Error(Nil)
-      }
-    })
-  {
-    Ok(html) -> html
-    Error(_) -> line
-  }
 }
 
 fn parse_featured_image(frontmatter: String) {
@@ -368,6 +383,7 @@ fn parse_featured_image(frontmatter: String) {
     Error(_) -> None
     Ok(src) -> {
       let assert Ok(alt) = frontmatter_value(frontmatter, "featured_alt")
+
       Some(FeaturedImage(src:, alt:))
     }
   }
@@ -392,5 +408,65 @@ fn frontmatter_flag(frontmatter: String, key: String) -> Bool {
   case frontmatter_value(frontmatter, key) {
     Ok(value) -> string.lowercase(value) == "true"
     Error(_) -> False
+  }
+}
+
+// Shortcodes
+
+fn expand_shortcodes(markdown: String, shortcodes: List(Shortcode)) -> String {
+  markdown
+  |> string.split("\n")
+  |> expand_shortcode_lines(shortcodes, False)
+  |> string.join("\n")
+}
+
+fn expand_shortcode_lines(
+  lines: List(String),
+  shortcodes: List(Shortcode),
+  in_code_block: Bool,
+) -> List(String) {
+  case lines {
+    [] -> []
+    [line, ..rest] -> {
+      let trimmed_line = string.trim(line)
+
+      case string.starts_with(trimmed_line, "```") {
+        True -> [
+          line,
+          ..expand_shortcode_lines(rest, shortcodes, !in_code_block)
+        ]
+        False -> {
+          let expanded_line = case in_code_block {
+            True -> line
+            False -> expand_shortcode_line(line, trimmed_line, shortcodes)
+          }
+
+          [
+            expanded_line,
+            ..expand_shortcode_lines(rest, shortcodes, in_code_block)
+          ]
+        }
+      }
+    }
+  }
+}
+
+fn expand_shortcode_line(
+  line: String,
+  trimmed_line: String,
+  shortcodes: List(Shortcode),
+) -> String {
+  case
+    list.find_map(shortcodes, fn(shortcode) {
+      let Shortcode(marker:, html:) = shortcode
+
+      case trimmed_line == marker {
+        True -> Ok(html)
+        False -> Error(Nil)
+      }
+    })
+  {
+    Ok(html) -> html
+    Error(_) -> line
   }
 }

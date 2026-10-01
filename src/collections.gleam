@@ -4,7 +4,7 @@ pub type Collection {
   Collection(
     source_directory: String,
     route: String,
-    placeholder: String,
+    shortcode: String,
     item_label: String,
     indexable: Bool,
   )
@@ -14,8 +14,8 @@ pub type FeaturedImage {
   FeaturedImage(src: String, alt: String)
 }
 
-pub type Entry {
-  Entry(
+pub type Item {
+  Item(
     slug: String,
     title: String,
     description: String,
@@ -31,14 +31,14 @@ pub fn all() -> List(Collection) {
     Collection(
       source_directory: "collections/guides",
       route: "guides",
-      placeholder: "{{ guide-list }}",
+      shortcode: "{{ guide-list }}",
       item_label: "guide",
       indexable: True,
     ),
     Collection(
       source_directory: "collections/notes",
       route: "notes",
-      placeholder: "{{ note-list }}",
+      shortcode: "{{ note-list }}",
       item_label: "note",
       indexable: True,
     ),

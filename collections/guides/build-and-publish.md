@@ -15,7 +15,7 @@ npm install
 npm run build
 ```
 
-The resulting `dist/` directory is the whole deployable website. A successful build reports the number of routes and collection entries it generated.
+The resulting `dist/` directory is the whole deployable website. A successful build reports the number of routes and collection items it generated.
 
 ## Preview it locally
 

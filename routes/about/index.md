@@ -36,7 +36,7 @@ Nothing hydrates the whole page. Nothing intercepts navigation. The output can b
 - Page titles and descriptions from frontmatter
 - Canonical and social metadata
 - Multiple collections with featured artwork
-- Per-page, per-entry, and per-collection indexing controls
+- Per-page, per-item, and per-collection indexing controls
 - Sitemap, robots file, and custom 404 page
 - Favicon fallbacks and image optimization
 

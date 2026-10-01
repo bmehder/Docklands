@@ -11,7 +11,7 @@ Docklands keeps each kind of work in an obvious place. You should rarely need to
 ## The five working areas
 
 - `routes/` contains standalone pages and collection index pages.
-- `collections/` contains repeatable entries such as guides and notes.
+- `collections/` contains repeatable items such as guides and notes.
 - `src/` contains the Gleam generator, shared layout, configuration, and reusable HTML components.
 - `assets/` contains stylesheet source, files copied as-is, and raster images optimized during the build.
 - `widgets/` is a separate Gleam project for optional browser-side Lustre islands.

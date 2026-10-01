@@ -1,4 +1,4 @@
-import collections.{type Entry, Entry, FeaturedImage}
+import collections.{type Item, FeaturedImage, Item}
 import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
@@ -8,16 +8,17 @@ import site
 pub fn collection_list(
   route: String,
   item_label: String,
-  entries: List(Entry),
+  items: List(Item),
 ) -> String {
   let cards =
-    entries
-    |> list.map(fn(entry) {
-      let Entry(slug:, title:, description:, published:, featured_image:, ..) =
-        entry
+    items
+    |> list.map(fn(item) {
+      let Item(slug:, title:, description:, published:, featured_image:, ..) =
+        item
+
       let image = case featured_image {
         Some(FeaturedImage(src:, alt:)) ->
-          "<a class='entry-image' href='/"
+          "<a class='item-image' href='/"
           <> route
           <> "/"
           <> slug
@@ -30,15 +31,15 @@ pub fn collection_list(
       </a>"
         None -> "<!-- No featured image -->"
       }
-      "<article class='entry-card group'>
+      "<article class='item-card group'>
       " <> image <> "
-      <div class='entry-card-copy'>
+      <div class='item-card-copy'>
         " <> published_date(published) <> "
         <h2><a href='/" <> route <> "/" <> slug <> "/'>" <> site.escape_html(
         title,
       ) <> "</a></h2>
         <p>" <> site.escape_html(description) <> "</p>
-        <a class='entry-link' href='/" <> route <> "/" <> slug <> "/'>Read " <> item_label <> " <span aria-hidden='true'>↗</span></a>
+        <a class='item-link' href='/" <> route <> "/" <> slug <> "/'>Read " <> item_label <> " <span aria-hidden='true'>↗</span></a>
       </div>
     </article>"
     })
@@ -46,19 +47,19 @@ pub fn collection_list(
   "<div class='collection-list'>" <> cards <> "</div>"
 }
 
-pub fn entry_meta(
+pub fn item_meta(
   route: String,
   item_label: String,
   published: String,
 ) -> String {
-  "<div class='entry-meta'>
+  "<div class='item-meta'>
     <a class='back-link' href='/" <> route <> "/'>← All " <> item_label <> "s</a>
     " <> published_date(published) <> "
   </div>"
 }
 
-pub fn featured_image(entry: Entry) -> String {
-  let Entry(featured_image:, ..) = entry
+pub fn featured_image(item: Item) -> String {
+  let Item(featured_image:, ..) = item
   case featured_image {
     Some(FeaturedImage(src:, alt:)) -> "<figure class='featured-image'>
     <img src='" <> site.escape_html(src) <> "' alt='" <> site.escape_html(alt) <> "'>

@@ -1,4 +1,6 @@
+import gleam/option.{Some}
 import gleam/string
+import gleam/uri.{type Uri, Uri}
 
 pub const base_url = "https://docklands-ssg.vercel.app"
 
@@ -18,7 +20,7 @@ pub fn page(metadata: Metadata, content: String) -> String {
     metadata
   let title = escape_html(title)
   let description = escape_html(description)
-  let canonical_url = escape_html(base_url <> path)
+  let canonical_url = escape_html(absolute_url(path))
   let image_url = escape_html(absolute_url(image))
   let robots = case indexable {
     True -> ""
@@ -61,12 +63,36 @@ pub fn page(metadata: Metadata, content: String) -> String {
 "
 }
 
-pub fn absolute_url(path: String) -> String {
+pub fn absolute_url(reference: String) -> String {
+  let reference_uri = parse_uri(reference)
+
+  case reference_uri {
+    Uri(scheme: Some(_), ..) -> uri.to_string(reference_uri)
+    Uri(..) -> {
+      let assert Ok(absolute_uri) =
+        uri.merge(parse_uri(base_url), reference_uri)
+      absolute_uri
+      |> preserve_trailing_slash(from: reference_uri)
+      |> uri.to_string
+    }
+  }
+}
+
+fn parse_uri(value: String) -> Uri {
+  let assert Ok(parsed_uri) = uri.parse(value)
+  parsed_uri
+}
+
+fn preserve_trailing_slash(absolute: Uri, from reference: Uri) -> Uri {
+  let Uri(path: reference_path, ..) = reference
+  let Uri(path: absolute_path, ..) = absolute
+
   case
-    string.starts_with(path, "http://") || string.starts_with(path, "https://")
+    string.ends_with(reference_path, "/")
+    && !string.ends_with(absolute_path, "/")
   {
-    True -> path
-    False -> base_url <> path
+    True -> Uri(..absolute, path: absolute_path <> "/")
+    False -> absolute
   }
 }
 

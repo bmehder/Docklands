@@ -12,7 +12,7 @@ Docklands is a reference project rather than a generalized framework. It demonst
 
 ## Philosophy
 
-- Write pages and entries primarily in Markdown.
+- Write pages and items primarily in Markdown.
 - Use raw HTML when a section genuinely needs more structure.
 - Keep shared layout and generation logic in small Gleam functions.
 - Generate one static Tailwind stylesheet.
@@ -31,6 +31,18 @@ npm run build
 npm run serve
 ```
 
+Run the regression tests after changing generation logic, content conventions, or the shared layout:
+
+```sh
+npm test
+```
+
+Before committing, run the complete check. It verifies formatting, generates and tests the static output, and runs the production build:
+
+```sh
+npm run check
+```
+
 Open [http://localhost:8000](http://localhost:8000). Python's basic server does not automatically use the custom error page, so preview it directly at `/404.html`.
 
 ## Project structure
@@ -42,7 +54,7 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │   ├── default/favicon.svg      # Neutral fallback icon
 │   └── static/                  # Copied assets and image sources
 ├── collections/
-│   ├── guides/                  # Practical documentation entries
+│   ├── guides/                  # Practical documentation items
 │   └── notes/                   # Short architectural notes
 ├── routes/                      # Markdown tree mirrored into dist/
 │   ├── index.md
@@ -52,7 +64,7 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │   └── notes/index.md
 ├── scripts/optimize-images.mjs
 ├── src/
-│   ├── collections.gleam        # Collection definitions and entry type
+│   ├── collections.gleam        # Collection definitions and item types
 │   ├── components.gleam         # Reusable static HTML blocks
 │   ├── docklands.gleam          # Markdown rendering and file generation
 │   └── site.gleam               # Shared document layout and navigation
@@ -69,7 +81,7 @@ The root project targets Erlang for filesystem-based generation. The separate `w
 
 `npm run build` performs four explicit steps:
 
-1. Gleam discovers routes and collection entries, parses Markdown with Mörk, applies the shared layout, generates discovery files, and copies static assets.
+1. Gleam discovers routes and collection items, parses Markdown with Mörk, applies the shared layout, generates discovery files, and copies static assets.
 2. The image script converts supported raster files beneath `assets/static/images/` to maximum-width 1000px quality-68 WebP output and derives favicon PNGs from one SVG master.
 3. Lustre's development tools bundle the isolated build-receipt widget into `dist/assets/build_receipt.js`.
 4. Tailwind scans the source and writes one minified stylesheet.
@@ -87,19 +99,19 @@ description: A useful description for search and social metadata.
 ---
 ```
 
-Add `noindex: true` to omit a route or collection entry from the sitemap and emit a robots `noindex` directive.
+Add `noindex: true` to omit a route or collection item from the sitemap and emit a robots `noindex` directive.
 
 ## Collections
 
-`src/collections.gleam` defines every collection's source directory, route, listing placeholder, item label, and indexing policy. Docklands includes two examples: Guides for documentation and Notes for shorter architectural essays.
+`src/collections.gleam` defines every collection's source directory, route, shortcode, item label, and indexing policy. Docklands includes two examples: Guides for documentation and Notes for shorter architectural essays.
 
-Every collection entry requires `title`, `description`, and `published` frontmatter. `featured_image` is optional; when it is present, `featured_alt` is required. Entries are sorted newest-first. A standalone `{{ featured-image }}` placeholder places available artwork, while the collection index uses its configured list placeholder.
+Every collection item requires `title`, `description`, and `published` frontmatter. `featured_image` is optional; when it is present, `featured_alt` is required. Items are sorted newest-first. A standalone `{{ featured-image }}` shortcode places available artwork, while the collection index uses its configured shortcode.
 
-Set a collection's `indexable` field to `False` to exclude its index and all entries from search indexing and the sitemap.
+Set a collection's `indexable` field to `False` to exclude its index and all items from search indexing and the sitemap.
 
 ## Reusable components
 
-Explicit placeholders are replaced with HTML returned by functions in `src/components.gleam` before Markdown is parsed. A marker expands only when it appears on a standalone line outside a fenced code block, so inline and code examples remain literal. This keeps repeated markup in one place without introducing a general template language or constructing every page through an HTML DSL.
+Shortcodes expand to HTML returned by functions in `src/components.gleam` before Markdown is parsed. A shortcode expands only when it appears on a standalone line outside a fenced code block, so inline and code examples remain literal. This keeps repeated markup in one place without introducing a general template language or constructing every page through an HTML DSL.
 
 ## The Lustre island
 
@@ -113,7 +125,7 @@ The custom site icon lives at `assets/static/favicon.svg`. The build derives a 3
 
 ## Metadata and discovery
 
-The shared layout emits titles, descriptions, canonical URLs, Open Graph fields, X card fields, and icon links. Collection entries with featured artwork use it for social previews; entries without artwork and ordinary routes fall back to `assets/static/og.png`.
+The shared layout emits titles, descriptions, canonical URLs, Open Graph fields, X card fields, and icon links. Collection items with featured artwork use it for social previews; items without artwork and ordinary routes fall back to `assets/static/og.png`.
 
 Each build also creates `sitemap.xml`, `robots.txt`, and a non-indexed `404.html`.
 
@@ -121,7 +133,7 @@ Each build also creates `sitemap.xml`, `robots.txt`, and a non-indexed `404.html
 
 Import the GitHub repository into Vercel with the root directory left as `./` and the Framework Preset set to **Other**. The checked-in `vercel.json` pins the Gleam compiler, runs the generator on Gleam's JavaScript target, and tells Vercel to publish only `dist/`. No environment variables are required.
 
-The normal local build uses Lustre's development tools and therefore requires Erlang. Vercel instead compiles the widget to JavaScript and bundles the small entry module with esbuild, avoiding an Erlang installation in the deployment environment.
+The normal local build uses Lustre's development tools and therefore requires Erlang. Vercel instead compiles the widget to JavaScript and bundles the small item module with esbuild, avoiding an Erlang installation in the deployment environment.
 
 Vercel rebuilds and deploys the site whenever the production branch changes. Preview deployments use the same configuration.
 

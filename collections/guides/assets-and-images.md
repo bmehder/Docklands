@@ -20,14 +20,14 @@ The source file stays untouched. Inspect the matching file in `dist/assets/image
 
 ## Use optional featured artwork
 
-A collection entry may omit image metadata entirely. To add artwork, supply both fields:
+A collection item may omit image metadata entirely. To add artwork, supply both fields:
 
 ```yaml
 featured_image: /assets/images/harbour-map.webp
 featured_alt: A simplified map of the harbour and its surrounding streets
 ```
 
-Place the featured-image component marker on its own line in the entry body when you want the artwork inside the article.
+Place the featured-image component marker on its own line in the item body when you want the artwork inside the article.
 
 ## Customize the favicon
 

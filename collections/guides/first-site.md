@@ -28,7 +28,7 @@ The Markdown body can contain ordinary prose, lists, links, and raw HTML wheneve
 
 The root build command performs the whole journey:
 
-1. Gleam discovers routes and collection entries.
+1. Gleam discovers routes and collection items.
 2. Mörk converts Markdown to HTML.
 3. Shared Gleam functions add layout and metadata.
 4. Images, CSS, and the isolated widget are prepared.

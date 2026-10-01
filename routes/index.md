@@ -27,7 +27,7 @@ description: A small, content-first static-site starter for Gleam, Markdown, Tai
   <article>
     <span>01</span>
     <h3>Content stays readable</h3>
-    <p>Pages and collection entries live in Markdown, with raw HTML available when a layout needs more control.</p>
+    <p>Pages and collection items live in Markdown, with raw HTML available when a layout needs more control.</p>
   </article>
   <article>
     <span>02</span>
