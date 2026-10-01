@@ -89,7 +89,7 @@ The remaining root files configure Gleam, npm, Git, and Vercel. The root project
 
 `npm run build` performs four explicit steps:
 
-1. Gleam discovers routes and collection items, parses Markdown with Mörk, applies the shared layout, generates discovery files, and copies static assets.
+1. Gleam discovers routes and collection items, parses Markdown with Mörk, applies the shared layout, generates tag archives and discovery files, and copies static assets.
 2. The image script converts supported raster files beneath `assets/static/images/` to maximum-width 1000px quality-68 WebP output and derives favicon PNGs from one SVG master.
 3. Lustre's development tools bundle the isolated build-receipt widget into `dist/assets/build_receipt.js`.
 4. Tailwind scans the source and writes one minified stylesheet.
@@ -115,6 +115,8 @@ Add `noindex: true` to omit a route or collection item from the sitemap and emit
 
 Every collection item requires `title`, `description`, and `published` frontmatter. `featured_image` is optional; when it is present, `featured_alt` is required. Items are sorted newest-first. A standalone `{{ featured-image }}` shortcode places available artwork, while the collection index uses its configured shortcode.
 
+Optional `tags` use a comma-separated list such as `tags: Gleam, Markdown, Deployment`. Tags appear on item pages and collection cards, and each one produces a cross-collection archive under `/tags/<tag>/`. The generated `/tags/` index lists the complete vocabulary and the number of matching items, making existing tags easy to discover without a CMS. Docklands deliberately keeps this author-controlled rather than adding a general taxonomy configuration system.
+
 Set a collection's `indexable` field to `False` to exclude its index and all items from search indexing and the sitemap.
 
 ## Reusable components
@@ -135,7 +137,7 @@ The primary Docklands mark lives at `assets/static/docklands-mark.svg` and is sh
 
 The shared layout emits titles, descriptions, canonical URLs, Open Graph fields, X card fields, and icon links. Collection items with featured artwork use it for social previews; items without artwork and ordinary routes fall back to `assets/static/og.png`.
 
-Each build also creates `sitemap.xml`, `robots.txt`, and a non-indexed `404.html`.
+Each build also creates tag archive pages, `sitemap.xml`, `robots.txt`, and a non-indexed `404.html`.
 
 ## Deploy to Vercel
 

@@ -22,6 +22,10 @@ pub fn generated_site_test() {
   let guide_index = read_generated_file("dist/guides/index.html")
   let content_model =
     read_generated_file("dist/guides/content-model/index.html")
+  let collections_guide =
+    read_generated_file("dist/guides/collections/index.html")
+  let collections_tag = read_generated_file("dist/tags/collections/index.html")
+  let tag_index = read_generated_file("dist/tags/index.html")
   let not_found_page = read_generated_file("dist/404.html")
   let sitemap = read_generated_file("dist/sitemap.xml")
   let robots = read_generated_file("dist/robots.txt")
@@ -49,6 +53,12 @@ pub fn generated_site_test() {
     "<img src='/assets/images/guide-content.svg'",
   )
   assert string.contains(content_model, "<code>{{ featured-image }}</code>")
+  assert string.contains(collections_guide, "href='/tags/collections/'")
+  assert string.contains(collections_tag, "Everything published with this tag")
+  assert string.contains(collections_tag, "href='/guides/collections/'")
+  assert string.contains(tag_index, "<h1>Tag index</h1>")
+  assert string.contains(tag_index, "href='/tags/static-sites/'")
+  assert string.contains(tag_index, "2 items")
 
   assert string.contains(
     not_found_page,
@@ -60,6 +70,14 @@ pub fn generated_site_test() {
     "<loc>https://docklands-ssg.vercel.app/guides/content-model/</loc>",
   )
   assert string.contains(sitemap, "<lastmod>2026-09-27</lastmod>")
+  assert string.contains(
+    sitemap,
+    "<loc>https://docklands-ssg.vercel.app/tags/collections/</loc>",
+  )
+  assert string.contains(
+    sitemap,
+    "<loc>https://docklands-ssg.vercel.app/tags/</loc>",
+  )
   assert !string.contains(sitemap, "/404.html")
 
   assert string.contains(

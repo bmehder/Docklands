@@ -2,6 +2,7 @@
 title: Create and change collections
 description: Add repeatable content types, configure their listings, and understand required and optional item fields.
 published: 2026-09-27
+tags: Collections, Content model, Frontmatter
 featured_image: /assets/images/guide-collections.svg
 featured_alt: Four coordinated content cards arranged in a dark grid
 ---
@@ -27,6 +28,14 @@ Each Markdown file in the collection directory becomes an item. These fields are
 - `published` in `YYYY-MM-DD` form
 
 Featured artwork is optional. If you add `featured_image`, also add useful `featured_alt` text. Items without artwork simply render without an image area in both the listing and the article.
+
+Tags are optional too. Supply a comma-separated list when an item belongs to one or more topics:
+
+```yaml
+tags: Gleam, Markdown, Deployment
+```
+
+Docklands displays those tags on the item and its collection card. Each tag links to an automatically generated archive such as `/tags/gleam/`, which can include matching items from any collection. The `/tags/` index lists every existing tag with its item count, so authors can check the vocabulary before adding another. Keep tag spelling and capitalisation consistent: tags are intentionally a small, author-controlled vocabulary rather than a CMS subsystem.
 
 ## Change the content model deliberately
 

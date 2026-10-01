@@ -2,6 +2,7 @@
 title: Shape content without inventing a CMS
 description: Use routes, collections, frontmatter, and explicit components as a compact content model.
 published: 2026-09-27
+tags: Content model, Collections, Shortcodes
 featured_image: /assets/images/guide-content.svg
 featured_alt: An abstract dark document with teal and amber content lines
 ---

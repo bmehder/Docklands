@@ -111,6 +111,7 @@ fn header() -> String {
       <nav class='desktop-nav' aria-label='Main navigation'>
         <a href='/guides/'>Guides</a>
         <a href='/notes/'>Notes</a>
+        <a href='/tags/'>Tags</a>
         <a href='/about/'>About</a>
         " <> github_link() <> "
       </nav>
@@ -121,6 +122,7 @@ fn header() -> String {
           <nav aria-label='Mobile navigation'>
             <a href='/guides/'>Guides</a>
             <a href='/notes/'>Notes</a>
+            <a href='/tags/'>Tags</a>
             <a href='/about/'>About</a>
             " <> github_link() <> "
           </nav>

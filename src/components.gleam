@@ -12,39 +12,76 @@ pub fn collection_list(
 ) -> String {
   let cards =
     items
-    |> list.map(fn(item) {
-      let Item(slug:, title:, description:, published:, featured_image:, ..) =
-        item
+    |> list.map(item_card(route, item_label, _))
+    |> string.join("\n")
 
-      let image = case featured_image {
-        Some(FeaturedImage(src:, alt:)) ->
-          "<a class='item-image' href='/"
-          <> route
-          <> "/"
-          <> slug
-          <> "/' tabindex='-1'>
+  "<div class='collection-list'>" <> cards <> "</div>"
+}
+
+pub fn tagged_item_list(items: List(#(String, String, Item))) -> String {
+  let cards =
+    items
+    |> list.map(fn(tagged_item) {
+      let #(route, item_label, item) = tagged_item
+      item_card(route, item_label, item)
+    })
+    |> string.join("\n")
+
+  "<div class='collection-list'>" <> cards <> "</div>"
+}
+
+fn item_card(route: String, item_label: String, item: Item) -> String {
+  let Item(slug:, title:, description:, published:, tags:, featured_image:, ..) =
+    item
+
+  let image = case featured_image {
+    Some(FeaturedImage(src:, alt:)) ->
+      "<a class='item-image' href='/"
+      <> route
+      <> "/"
+      <> slug
+      <> "/' tabindex='-1'>
         <img src='"
-          <> site.escape_html(src)
-          <> "' alt='"
-          <> site.escape_html(alt)
-          <> "' loading='lazy'>
+      <> site.escape_html(src)
+      <> "' alt='"
+      <> site.escape_html(alt)
+      <> "' loading='lazy'>
       </a>"
-        None -> "<!-- No featured image -->"
-      }
-      "<article class='item-card group'>
+    None -> "<!-- No featured image -->"
+  }
+
+  "<article class='item-card group'>
       " <> image <> "
       <div class='item-card-copy'>
         " <> published_date(published) <> "
         <h2><a href='/" <> route <> "/" <> slug <> "/'>" <> site.escape_html(
-        title,
-      ) <> "</a></h2>
+    title,
+  ) <> "</a></h2>
         <p>" <> site.escape_html(description) <> "</p>
+        " <> tag_list(tags) <> "
         <a class='item-link' href='/" <> route <> "/" <> slug <> "/'>Read " <> item_label <> " <span aria-hidden='true'>↗</span></a>
       </div>
     </article>"
-    })
-    |> string.join("\n")
-  "<div class='collection-list'>" <> cards <> "</div>"
+}
+
+pub fn tag_list(tags: List(String)) -> String {
+  case tags {
+    [] -> ""
+    _ -> {
+      let links =
+        tags
+        |> list.map(fn(tag) {
+          "<a href='/tags/"
+          <> collections.tag_slug(tag)
+          <> "/'>"
+          <> site.escape_html(tag)
+          <> "</a>"
+        })
+        |> string.join("\n")
+
+      "<div class='tag-list' aria-label='Tags'>" <> links <> "</div>"
+    }
+  }
 }
 
 pub fn item_meta(
@@ -94,5 +131,6 @@ fn format_date(published: String) -> String {
     "12" -> "December"
     _ -> month
   }
+
   int.to_string(day) <> " " <> month <> " " <> year
 }

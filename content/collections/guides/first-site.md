@@ -2,6 +2,7 @@
 title: Build your first Docklands site
 description: Follow one page from Markdown source to complete static HTML output.
 published: 2026-09-30
+tags: Getting started, Markdown, Build
 featured_image: /assets/images/guide-foundations.svg
 featured_alt: An abstract structural grid with four illuminated vertical supports
 ---

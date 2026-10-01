@@ -2,6 +2,7 @@
 title: Add an interactive island
 description: Use plain JavaScript first, or mount a focused Lustre application without hydrating the site.
 published: 2026-09-25
+tags: Interactivity, Lustre, JavaScript
 featured_image: /assets/images/guide-islands.svg
 featured_alt: A focused teal interface island within a larger dark grid
 ---

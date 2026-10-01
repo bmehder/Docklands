@@ -2,6 +2,7 @@
 title: Build, preview, and publish
 description: Run the complete Docklands build, serve its static output locally, and deploy it to a static host.
 published: 2026-09-24
+tags: Build, Deployment, Static sites
 featured_image: /assets/images/guide-publish.svg
 featured_alt: Three connected build stages ending in an amber deployment node
 ---

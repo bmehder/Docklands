@@ -2,6 +2,7 @@
 title: Find your way around the project
 description: Learn which Docklands directory owns content, generation, assets, widgets, and generated output.
 published: 2026-09-29
+tags: Getting started, Project structure
 featured_image: /assets/images/guide-structure.svg
 featured_alt: A branching project structure connecting one root to three modules
 ---

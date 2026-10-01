@@ -2,6 +2,7 @@
 title: Give every interactive island a shoreline
 description: A small DOM boundary keeps interactive state from becoming site architecture.
 published: 2026-09-25
+tags: Interactivity, Lustre, Architecture
 featured_image: /assets/images/note-boundaries.svg
 featured_alt: Two abstract panels connected across a clear boundary
 ---

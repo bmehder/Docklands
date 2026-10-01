@@ -66,7 +66,7 @@ description: A small, content-first static-site starter for Gleam, Markdown, Tai
     <article>
       <span>Collections</span>
       <h3>Repeatable content, typed in Gleam</h3>
-      <p>Define collections once, turn Markdown files into typed items, and place generated lists in pages with shortcodes.</p>
+        <p>Define collections once, turn Markdown files into typed items, connect related items with tags, and place generated lists with shortcodes.</p>
       <a href='/guides/collections/'>Build a collection <span aria-hidden='true'>→</span></a>
     </article>
     <article>

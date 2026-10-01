@@ -28,16 +28,26 @@ type Shortcode {
   Shortcode(marker: String, html: String)
 }
 
+type TaggedItem {
+  TaggedItem(route: String, item_label: String, item: Item)
+}
+
 pub fn main() -> Nil {
   prepare_output()
 
   let loaded_collections = collections.all() |> list.map(load_collection)
   let shortcodes = loaded_collections |> list.map(collection_shortcode)
+  let tag_count =
+    loaded_collections
+    |> indexable_tagged_items
+    |> tag_names
+    |> list.length
 
   let route_sources = load_routes()
 
   list.each(route_sources, build_route(_, shortcodes, loaded_collections))
   list.each(loaded_collections, build_collection(_, shortcodes))
+  build_tag_pages(loaded_collections)
   write_discovery_files(route_sources, loaded_collections)
   copy_static_assets()
 
@@ -46,7 +56,9 @@ pub fn main() -> Nil {
     <> int.to_string(list.length(route_sources))
     <> " routes, "
     <> int.to_string(item_count(loaded_collections))
-    <> " collection items, and static assets in dist/",
+    <> " collection items, "
+    <> int.to_string(tag_count)
+    <> " tag archives, a tag index, and static assets in dist/",
   )
 }
 
@@ -196,6 +208,7 @@ fn load_item(collection: Collection, source_filename: String) -> Item {
   let #(frontmatter, _) = mork.split_frontmatter_from_input(source_markdown)
 
   let assert Ok(published) = frontmatter_value(frontmatter, "published")
+  let tags = frontmatter_list(frontmatter, "tags")
   let featured_image = parse_featured_image(frontmatter)
 
   Item(
@@ -203,6 +216,7 @@ fn load_item(collection: Collection, source_filename: String) -> Item {
     title:,
     description:,
     published:,
+    tags:,
     featured_image:,
     indexable: collection_is_indexable && indexable,
     markdown:,
@@ -244,7 +258,7 @@ fn build_item(
 ) -> Nil {
   let Collection(route:, item_label:, ..) = collection
 
-  let Item(slug:, title:, description:, published:, markdown:, ..) = item
+  let Item(slug:, title:, description:, published:, tags:, markdown:, ..) = item
 
   let output_directory = "dist/" <> route <> "/" <> slug
   let item_shortcodes = [
@@ -264,6 +278,7 @@ fn build_item(
   let content =
     "<article class='item-content'>"
     <> components.item_meta(route, item_label, published)
+    <> components.tag_list(tags)
     <> item_html
     <> "</article>"
 
@@ -292,6 +307,141 @@ fn build_item(
   let assert Ok(Nil) =
     simplifile.write(to: output_directory <> "/index.html", contents: html)
   Nil
+}
+
+// Tags
+
+fn build_tag_pages(loaded_collections: List(LoadedCollection)) -> Nil {
+  let tagged_items = indexable_tagged_items(loaded_collections)
+  let tags = tag_names(tagged_items)
+
+  build_tag_index(tags, tagged_items)
+  list.each(tags, build_tag_page(_, tagged_items))
+}
+
+fn build_tag_index(tags: List(String), tagged_items: List(TaggedItem)) -> Nil {
+  let tag_links =
+    tags
+    |> list.map(fn(tag) {
+      let item_count =
+        tagged_items
+        |> list.filter(fn(tagged_item) {
+          let TaggedItem(item: Item(tags:, ..), ..) = tagged_item
+          list.contains(tags, tag)
+        })
+        |> list.length
+
+      "<a href='/tags/"
+      <> collections.tag_slug(tag)
+      <> "/'><span>"
+      <> site.escape_html(tag)
+      <> "</span><small>"
+      <> int.to_string(item_count)
+      <> case item_count {
+        1 -> " item"
+        _ -> " items"
+      }
+      <> "</small></a>"
+    })
+    |> string.join("\n")
+
+  let content = "<section class='tag-heading'>
+      <p class='eyebrow'>Topics</p>
+      <h1>Tag index</h1>
+      <p>Browse the vocabulary already in use across every Docklands collection.</p>
+    </section>
+    <div class='tag-index'>" <> tag_links <> "</div>"
+
+  let html =
+    site.page(
+      site.Metadata(
+        title: "Tags — Docklands",
+        description: "Browse every topic used across Docklands guides and notes.",
+        path: "/tags/",
+        image: "/assets/og.png",
+        page_type: "website",
+        indexable: True,
+      ),
+      content,
+    )
+
+  let assert Ok(Nil) = simplifile.create_directory_all("dist/tags")
+  let assert Ok(Nil) =
+    simplifile.write(to: "dist/tags/index.html", contents: html)
+  Nil
+}
+
+fn build_tag_page(tag: String, tagged_items: List(TaggedItem)) -> Nil {
+  let matching_items =
+    tagged_items
+    |> list.filter(fn(tagged_item) {
+      let TaggedItem(item: Item(tags:, ..), ..) = tagged_item
+      list.contains(tags, tag)
+    })
+
+  let card_items =
+    matching_items
+    |> list.map(fn(tagged_item) {
+      let TaggedItem(route:, item_label:, item:) = tagged_item
+      #(route, item_label, item)
+    })
+
+  let title = tag <> " — Tagged content"
+  let description = "Guides and notes tagged “" <> tag <> "” in Docklands."
+  let path = "/tags/" <> collections.tag_slug(tag) <> "/"
+  let content = "<section class='tag-heading'>
+      <p class='eyebrow'>Tag</p>
+      <h1>" <> site.escape_html(tag) <> "</h1>
+      <p>Everything published with this tag, across every Docklands collection.</p>
+    </section>" <> components.tagged_item_list(card_items)
+
+  let html =
+    site.page(
+      site.Metadata(
+        title:,
+        description:,
+        path:,
+        image: "/assets/og.png",
+        page_type: "website",
+        indexable: True,
+      ),
+      content,
+    )
+
+  let output_directory = "dist/tags/" <> collections.tag_slug(tag)
+  let assert Ok(Nil) = simplifile.create_directory_all(output_directory)
+  let assert Ok(Nil) =
+    simplifile.write(to: output_directory <> "/index.html", contents: html)
+  Nil
+}
+
+fn indexable_tagged_items(
+  loaded_collections: List(LoadedCollection),
+) -> List(TaggedItem) {
+  loaded_collections
+  |> list.flat_map(fn(loaded_collection) {
+    let LoadedCollection(
+      collection: Collection(route:, item_label:, ..),
+      items:,
+    ) = loaded_collection
+
+    items
+    |> list.filter(fn(item) {
+      let Item(indexable:, ..) = item
+      indexable
+    })
+    |> list.map(fn(item) { TaggedItem(route:, item_label:, item:) })
+  })
+}
+
+fn tag_names(tagged_items: List(TaggedItem)) -> List(String) {
+  tagged_items
+  |> list.flat_map(fn(tagged_item) {
+    let TaggedItem(item: Item(tags:, ..), ..) = tagged_item
+    tags
+  })
+  |> list.unique
+  |> list.sort(string.compare)
 }
 
 // Discovery files
@@ -332,8 +482,19 @@ fn write_discovery_files(
       })
     })
 
+  let tag_urls =
+    loaded_collections
+    |> indexable_tagged_items
+    |> tag_names
+    |> list.map(fn(tag) {
+      sitemap_url("/tags/" <> collections.tag_slug(tag) <> "/", None)
+    })
+
+  let tag_urls = [sitemap_url("/tags/", None), ..tag_urls]
+
   let sitemap_entries =
-    list.append(route_urls, item_urls)
+    [route_urls, item_urls, tag_urls]
+    |> list.flatten
     |> string.join("\n")
 
   let sitemap =
@@ -414,6 +575,18 @@ fn frontmatter_flag(frontmatter: String, key: String) -> Bool {
   case frontmatter_value(frontmatter, key) {
     Ok(value) -> string.lowercase(value) == "true"
     Error(_) -> False
+  }
+}
+
+fn frontmatter_list(frontmatter: String, key: String) -> List(String) {
+  case frontmatter_value(frontmatter, key) {
+    Error(_) -> []
+    Ok(value) ->
+      value
+      |> string.split(",")
+      |> list.map(string.trim)
+      |> list.filter(fn(item) { !string.is_empty(item) })
+      |> list.unique
   }
 }
 

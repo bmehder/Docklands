@@ -2,6 +2,7 @@
 title: Work with assets, images, and icons
 description: Copy static files, optimize raster images during builds, and customize Docklands favicons.
 published: 2026-09-26
+tags: Assets, Images, Build
 featured_image: /assets/images/guide-assets.svg
 featured_alt: An abstract framed image with teal landscape lines and an amber sun
 ---

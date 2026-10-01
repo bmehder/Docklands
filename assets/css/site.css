@@ -108,18 +108,27 @@
   .collection-list h2 a { @apply transition hover:text-teal-300; }
   .item-card-copy > p:not(.published-date) { @apply mt-4 text-sm leading-6 text-slate-400; }
   .item-link { @apply mt-auto pt-8 text-sm font-semibold text-teal-300; }
+  .tag-list { @apply mt-6 flex flex-wrap gap-2; }
+  .tag-list a { @apply rounded-full border border-teal-300/15 bg-teal-300/5 px-2.5 py-1 font-mono text-[10px] tracking-wide text-teal-200 transition hover:border-teal-300/35 hover:bg-teal-300/10; }
   .published-date { @apply font-mono text-[10px] tracking-wide text-slate-500 uppercase; }
   .item-meta { @apply mb-10 flex items-center justify-between gap-6; }
   .back-link { @apply text-sm font-semibold text-teal-300 hover:text-teal-200; }
   .item-content { @apply max-w-3xl; }
   .item-content > p { @apply mt-8 max-w-3xl text-base leading-8 text-slate-400; }
   .item-content .published-date { @apply mt-0; }
+  .item-content > .tag-list { @apply mt-0 mb-10; }
   .item-content > h2 { @apply mt-16 text-3xl font-semibold tracking-tight text-white sm:text-4xl; }
   .item-content code { @apply rounded bg-white/5 px-1.5 py-1 font-mono text-sm text-teal-200; }
   .item-content pre { @apply mt-8 overflow-x-auto rounded-2xl border border-white/10 bg-[#020608] p-6; }
   .item-content pre code { @apply bg-transparent p-0 text-slate-300; }
   .featured-image { @apply mt-12 mb-16 max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-[#0b171c]; }
   .featured-image img { @apply aspect-[16/9] w-full object-cover; }
+  .tag-heading { @apply mb-16; }
+  .tag-heading > p:not(.eyebrow) { @apply mt-7 max-w-2xl text-lg leading-8 text-slate-400; }
+  .tag-index { @apply grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3; }
+  .tag-index > a { @apply flex min-h-28 items-end justify-between gap-5 bg-[#0b171c] p-6 transition hover:bg-[#102229]; }
+  .tag-index span { @apply text-lg font-semibold text-white; }
+  .tag-index small { @apply shrink-0 font-mono text-[10px] tracking-wide text-teal-300 uppercase; }
   .error-page { @apply relative isolate mx-auto flex min-h-[58vh] max-w-4xl flex-col items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b171c] px-6 py-20 text-center sm:px-12; }
   .error-code { @apply pointer-events-none absolute -top-12 -z-10 text-[13rem] leading-none font-bold tracking-[-.08em] text-white/[.025] select-none sm:-top-24 sm:text-[22rem]; }
   .error-mark { @apply mb-8 rounded-2xl bg-teal-300/5 p-3 ring-1 ring-teal-300/20; }
