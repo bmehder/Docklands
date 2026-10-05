@@ -63,7 +63,10 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │       ├── about/index.md
 │       ├── guides/index.md
 │       └── notes/index.md
-├── scripts/optimize-images.mjs
+├── scripts/
+│   ├── check-highlighted-code.mjs # Post-build highlighting regression check
+│   ├── highlight-code.mjs         # Build-time Shiki transformation
+│   └── optimize-images.mjs        # Raster and favicon processing
 ├── src/
 │   ├── collections.gleam        # Collection definitions and item types
 │   ├── content.gleam            # Frontmatter, documents, and shortcodes
@@ -89,12 +92,13 @@ The remaining root files configure Gleam, npm, Git, and Vercel. The root project
 
 ## Build pipeline
 
-`npm run build` performs four explicit steps:
+`npm run build` performs five explicit steps:
 
 1. Gleam discovers routes and collection items, parses Markdown with Mörk, applies the shared layout, generates tag archives and discovery files, and copies static assets.
-2. The image script converts supported raster files beneath `assets/static/images/` to maximum-width 1000px quality-68 WebP output and derives favicon PNGs from one SVG master.
-3. Lustre's development tools bundle the isolated build-receipt widget into `dist/assets/build_receipt.js`.
-4. Tailwind scans the source and writes one minified stylesheet.
+2. Shiki replaces labelled Markdown code fences with build-time syntax-highlighted HTML. Unlabelled and unsupported code remains unchanged, and no highlighting JavaScript is sent to the browser.
+3. The image script converts supported raster files beneath `assets/static/images/` to maximum-width 1000px quality-68 WebP output and derives favicon PNGs from one SVG master.
+4. Lustre's development tools bundle the isolated build-receipt widget into `dist/assets/build_receipt.js`.
+5. Tailwind scans the source and writes one minified stylesheet.
 
 The final `dist/` directory can be served by any static host.
 
@@ -158,6 +162,7 @@ Vercel rebuilds and deploys the site whenever the production branch changes. Pre
 - [Lustre](https://lustre.hexdocs.pm/) — isolated interactive islands
 - [esbuild](https://esbuild.github.io/) — JavaScript bundling for the Vercel build
 - [Sharp](https://sharp.pixelplumbing.com/) — build-time image processing
+- [Shiki](https://shiki.style/) — build-time syntax highlighting
 
 ## Deliberate non-goals
 

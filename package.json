@@ -2,20 +2,23 @@
   "name": "docklands",
   "private": true,
   "scripts": {
-    "build": "gleam run && npm run build:images && npm run build:widget && npm run build:css",
+    "build": "gleam run && npm run build:highlight && npm run build:images && npm run build:widget && npm run build:css",
+    "build:highlight": "node scripts/highlight-code.mjs",
     "build:css": "tailwindcss -i ./assets/css/site.css -o ./dist/assets/site.css --minify",
     "build:images": "node scripts/optimize-images.mjs",
     "build:widget": "cd widgets && gleam run -m lustre/dev build build_receipt --minify --no-html --outdir=../dist/assets",
     "serve": "python3 -m http.server 8000 --directory dist",
-    "build:vercel": "gleam run --target javascript && npm run build:images && npm run build:widget:vercel && npm run build:css",
+    "build:vercel": "gleam run --target javascript && npm run build:highlight && npm run build:images && npm run build:widget:vercel && npm run build:css",
     "build:widget:vercel": "cd widgets && gleam build --target javascript && cd .. && esbuild widgets/build_receipt_entry.mjs --bundle --minify --outfile=dist/assets/build_receipt.js",
     "test": "gleam test",
-    "check": "gleam format --check src test && gleam test && npm run build:vercel"
+    "test:highlight": "node scripts/check-highlighted-code.mjs",
+    "check": "gleam format --check src test && gleam test && npm run build:vercel && npm run test:highlight"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.0",
     "esbuild": "^0.28.2",
     "sharp": "^0.34.4",
+    "shiki": "^4.5.0",
     "tailwindcss": "^4.3.0"
   },
   "type": "module"
