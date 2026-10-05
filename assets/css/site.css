@@ -14,7 +14,7 @@
   .header-inner { @apply relative mx-auto flex h-[78px] max-w-6xl items-center justify-between px-6 sm:px-8 lg:px-10; }
   .brand { @apply flex items-center gap-3 text-sm font-semibold tracking-wide text-white; }
   .brand img { @apply size-9 rounded-xl ring-1 ring-white/10; }
-  .desktop-nav { @apply hidden items-center gap-7 text-sm text-slate-400 sm:flex; }
+  .desktop-nav { @apply hidden items-center gap-7 text-[15px] text-slate-400 sm:flex; }
   .desktop-nav > a:not(.github-link) { @apply transition hover:text-white; }
   .header-meta { @apply flex items-center gap-3; }
   .build-pill { @apply hidden rounded-full border border-teal-300/20 bg-teal-300/5 px-3 py-1.5 font-mono text-[10px] tracking-wide text-teal-200 lg:inline-flex; }
@@ -23,7 +23,7 @@
   .mobile-menu { @apply sm:hidden; }
   .mobile-menu summary { @apply cursor-pointer list-none rounded-full border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-200; }
   .mobile-menu summary::-webkit-details-marker { display: none; }
-  .mobile-menu nav { @apply absolute top-[69px] right-6 left-6 z-20 flex flex-col rounded-2xl border border-white/10 bg-[#0b171c] p-2 text-sm font-medium text-slate-300 shadow-2xl; }
+  .mobile-menu nav { @apply absolute top-[69px] right-6 left-6 z-20 flex flex-col rounded-2xl border border-white/10 bg-[#0b171c] p-2 text-[15px] font-medium text-slate-300 shadow-2xl; }
   .mobile-menu nav > a:not(.github-link) { @apply rounded-xl px-4 py-3 hover:bg-white/5 hover:text-white; }
   .mobile-menu .github-link { @apply ml-2; }
   .page-content { @apply mx-auto max-w-6xl px-6 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24; }
@@ -114,15 +114,16 @@
   .item-meta { @apply mb-10 flex items-center justify-between gap-6; }
   .back-link { @apply text-sm font-semibold text-teal-300 hover:text-teal-200; }
   .item-content { @apply max-w-3xl; }
-  .item-content > p { @apply mt-8 max-w-3xl text-base leading-8 text-slate-400; }
+  .item-content > p { @apply mt-8 max-w-3xl text-lg leading-8 text-slate-400; }
   .item-content .published-date { @apply mt-0; }
   .item-content > .tag-list { @apply mt-0 mb-10; }
   .item-content > h2 { @apply mt-16 text-3xl font-semibold tracking-tight text-white sm:text-4xl; }
-  .item-content code { @apply rounded bg-white/5 px-1.5 py-1 font-mono text-sm text-teal-200; }
+  .item-content > ul, .item-content > ol { @apply text-lg leading-8; }
+  .item-content code { @apply rounded bg-white/5 px-1.5 py-1 font-mono text-[.9em] text-teal-200; }
   .item-content pre { @apply mt-8 overflow-x-auto rounded-2xl border border-white/10 bg-[#020608] p-6; }
   .item-content pre code { @apply bg-transparent p-0 text-slate-300; }
   .item-content blockquote { @apply mt-8 border-l-2 border-amber-300/50 pl-6; }
-  .item-content blockquote p { @apply text-base leading-8 text-slate-300; }
+  .item-content blockquote p { @apply text-lg leading-8 text-slate-300; }
   .featured-image { @apply mt-12 mb-16 max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-[#0b171c]; }
   .featured-image img { @apply aspect-[16/9] w-full object-cover; }
   .tag-heading { @apply mb-16; }
