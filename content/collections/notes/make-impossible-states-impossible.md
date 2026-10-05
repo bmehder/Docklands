@@ -3,9 +3,13 @@ title: Make Impossible States Impossible with PHP Enums
 description: Use a stoplight to see how PHP enums can replace fragile combinations of booleans.
 published: 2026-10-05
 tags: PHP, Enums, Data modeling
+featured_image: /assets/images/note-impossible-states.webp
+featured_alt: A traffic signal with one green light illuminated as many invalid paths converge into one valid path
 ---
 
 # Make Impossible States Impossible with PHP Enums
+
+{{ featured-image }}
 
 Suppose we are writing software for a stoplight. We might represent it with three true-or-false values:
 
