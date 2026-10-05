@@ -121,6 +121,8 @@
   .item-content code { @apply rounded bg-white/5 px-1.5 py-1 font-mono text-sm text-teal-200; }
   .item-content pre { @apply mt-8 overflow-x-auto rounded-2xl border border-white/10 bg-[#020608] p-6; }
   .item-content pre code { @apply bg-transparent p-0 text-slate-300; }
+  .item-content blockquote { @apply mt-8 border-l-2 border-amber-300/50 pl-6; }
+  .item-content blockquote p { @apply text-base leading-8 text-slate-300; }
   .featured-image { @apply mt-12 mb-16 max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-[#0b171c]; }
   .featured-image img { @apply aspect-[16/9] w-full object-cover; }
   .tag-heading { @apply mb-16; }
