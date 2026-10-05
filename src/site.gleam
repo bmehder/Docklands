@@ -121,10 +121,11 @@ fn header() -> String {
         <details class='mobile-menu'>
           <summary aria-label='Open navigation'>Menu</summary>
           <nav aria-label='Mobile navigation'>
+            <a href='/'>Home</a>
+            <a href='/about/'>About</a>
             <a href='/guides/'>Guides</a>
             <a href='/notes/'>Notes</a>
             <a href='/tags/'>Tags</a>
-            <a href='/about/'>About</a>
             " <> github_link() <> "
           </nav>
         </details>
