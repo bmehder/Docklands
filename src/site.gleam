@@ -109,10 +109,11 @@ fn header() -> String {
         <span>Docklands</span>
       </a>
       <nav class='desktop-nav' aria-label='Main navigation'>
+        <a href='/'>Home</a>
+        <a href='/about/'>About</a>
         <a href='/guides/'>Guides</a>
         <a href='/notes/'>Notes</a>
         <a href='/tags/'>Tags</a>
-        <a href='/about/'>About</a>
         " <> github_link() <> "
       </nav>
       <div class='header-meta'>
