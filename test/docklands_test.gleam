@@ -1,3 +1,7 @@
+import content.{
+  Document, EmptyRequiredField, InvalidPublishedDate, MissingRequiredField,
+  RequiredFieldMustBeString,
+}
 import docklands
 import gleam/string
 import gleeunit
@@ -15,6 +19,61 @@ pub fn absolute_url_test() {
     == "https://cdn.example.com/image.webp"
 }
 
+pub fn portable_frontmatter_test() {
+  let source = read_generated_file("content/routes/portable/index.md")
+
+  let assert Ok(Document(title:, description:, published:, markdown:, ..)) =
+    content.parse_document(source)
+
+  assert title == "A portable page"
+  assert description
+    == "The same document can supply content to three independent projects."
+  assert published == "2026-10-06"
+  assert string.contains(markdown, "Markdown works. We build around that.")
+}
+
+pub fn quoted_and_plain_dates_match_test() {
+  let plain =
+    "---\ntitle: Page\ndescription: Summary\npublished: 2024-02-29\n---\n"
+  let quoted =
+    "---\ntitle: \"Page\"\ndescription: \"Summary\"\npublished: \"2024-02-29\"\n---\n"
+
+  let assert Ok(Document(
+    title: plain_title,
+    description: plain_description,
+    published: plain_published,
+    ..,
+  )) = content.parse_document(plain)
+  let assert Ok(Document(
+    title: quoted_title,
+    description: quoted_description,
+    published: quoted_published,
+    ..,
+  )) = content.parse_document(quoted)
+
+  assert plain_title == quoted_title
+  assert plain_description == quoted_description
+  assert plain_published == quoted_published
+}
+
+pub fn required_frontmatter_validation_test() {
+  let missing = "---\ntitle: Page\ndescription: Summary\n---\n"
+  let empty =
+    "---\ntitle: '   '\ndescription: Summary\npublished: 2026-10-06\n---\n"
+  let wrong_type =
+    "---\ntitle: true\ndescription: Summary\npublished: 2026-10-06\n---\n"
+  let invalid_date =
+    "---\ntitle: Page\ndescription: Summary\npublished: 2026-02-29\n---\n"
+
+  let assert Error(MissingRequiredField("published")) =
+    content.parse_document(missing)
+  let assert Error(EmptyRequiredField("title")) = content.parse_document(empty)
+  let assert Error(RequiredFieldMustBeString("title")) =
+    content.parse_document(wrong_type)
+  let assert Error(InvalidPublishedDate("2026-02-29")) =
+    content.parse_document(invalid_date)
+}
+
 pub fn generated_site_test() {
   docklands.main()
 
@@ -27,6 +86,7 @@ pub fn generated_site_test() {
   let collections_tag = read_generated_file("dist/tags/collections/index.html")
   let tag_index = read_generated_file("dist/tags/index.html")
   let not_found_page = read_generated_file("dist/404.html")
+  let portable_page = read_generated_file("dist/portable/index.html")
   let sitemap = read_generated_file("dist/sitemap.xml")
   let robots = read_generated_file("dist/robots.txt")
   let copied_logo = read_generated_file("dist/assets/docklands-mark.svg")
@@ -43,6 +103,14 @@ pub fn generated_site_test() {
   assert string.contains(home_page, "id='features'")
   assert string.contains(home_page, "href='/guides/collections/'")
   assert string.contains(home_page, "Metadata without repetition")
+  assert string.contains(home_page, "Portable content, clean URLs")
+
+  assert string.contains(portable_page, "<title>A portable page</title>")
+  assert string.contains(portable_page, "Markdown works. We build around that.")
+  assert !string.contains(
+    portable_page,
+    "This nested title is additional metadata",
+  )
 
   assert !string.contains(guide_index, "{{ guide-list }}")
   assert !string.contains(guide_index, "<!-- No featured image -->")
@@ -70,6 +138,10 @@ pub fn generated_site_test() {
     "<loc>https://docklands-ssg.vercel.app/guides/content-model/</loc>",
   )
   assert string.contains(sitemap, "<lastmod>2026-09-27</lastmod>")
+  assert string.contains(
+    sitemap,
+    "<loc>https://docklands-ssg.vercel.app/portable/</loc>\n    <lastmod>2026-10-06</lastmod>",
+  )
   assert string.contains(
     sitemap,
     "<loc>https://docklands-ssg.vercel.app/tags/collections/</loc>",

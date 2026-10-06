@@ -19,16 +19,19 @@ A Markdown file beneath `content/routes/` becomes one HTML file beneath `dist/`.
 
 ## Supply the required metadata
 
-Every route begins with a title and description:
+Every route begins with a title, description, and original publication date:
 
 ```yaml
 ---
 title: Uses — My site
 description: The tools and techniques behind this website.
+published: 2026-10-06
 ---
 ```
 
-The shared layout uses these values for the document title, description, canonical URL, Open Graph metadata, and X card metadata.
+The shared layout uses the title and description for document and social metadata. The publication date must be a real `YYYY-MM-DD` calendar date. It is included in the sitemap for a route but is not automatically shown on the page.
+
+These three non-empty, top-level fields form Docklands' portable content baseline. Quoted and plain YAML strings are both decoded normally. You may add project-specific scalar, list, or mapping fields without confusing the core-field reader; unknown metadata is ignored.
 
 ## Keep a page out of search
 

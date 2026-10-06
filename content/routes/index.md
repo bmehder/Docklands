@@ -1,6 +1,7 @@
 ---
 title: Docklands — Static sites, clearly built
 description: A small, content-first static-site starter for Gleam, Markdown, Tailwind CSS, and optional Lustre islands.
+published: 2026-09-30
 ---
 
 <section class='hero'>
@@ -59,8 +60,8 @@ description: A small, content-first static-site starter for Gleam, Markdown, Tai
     </article>
     <article>
       <span>Routes</span>
-      <h3>Folders become clean URLs</h3>
-      <p>Directory-based routes, frontmatter, per-page descriptions, and indexing controls keep page behaviour visible beside the content.</p>
+      <h3>Portable content, clean URLs</h3>
+      <p>Real YAML frontmatter gives every document a title, description, and publication date while folders keep routing in the destination.</p>
       <a href='/guides/routes-and-frontmatter/'>Understand routes <span aria-hidden='true'>→</span></a>
     </article>
     <article>

@@ -1,6 +1,7 @@
 ---
 title: Notes — Docklands
 description: Design notes and architectural decisions from the Docklands project.
+published: 2026-09-30
 ---
 
 <p class='eyebrow'>Architectural notes</p>

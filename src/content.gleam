@@ -1,64 +1,111 @@
 import collections.{FeaturedImage}
+import gleam/dict.{type Dict}
+import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleam/string
 import mork
+import yamleam
+import yamleam/node.{type YamlNode, YamlBool, YamlMap, YamlString}
+
+pub type Metadata {
+  Metadata(values: Dict(String, YamlNode))
+}
 
 pub type Document {
   Document(
     title: String,
     description: String,
+    published: String,
     indexable: Bool,
     markdown: String,
+    metadata: Metadata,
   )
+}
+
+pub type ParseError {
+  InvalidYaml(yamleam.YamlError)
+  FrontmatterMustBeMapping
+  MissingRequiredField(String)
+  RequiredFieldMustBeString(String)
+  EmptyRequiredField(String)
+  InvalidPublishedDate(String)
 }
 
 pub type Shortcode {
   Shortcode(marker: String, html: String)
 }
 
-pub fn parse_document(source: String) -> Document {
+pub fn parse_document(source: String) -> Result(Document, ParseError) {
   let #(frontmatter, markdown) = mork.split_frontmatter_from_input(source)
 
-  let assert Ok(title) = frontmatter_value(frontmatter, "title")
-  let assert Ok(description) = frontmatter_value(frontmatter, "description")
+  use metadata <- result.try(parse_metadata(frontmatter))
+  use title <- result.try(required_string(metadata, "title"))
+  use description <- result.try(required_string(metadata, "description"))
+  use published <- result.try(required_string(metadata, "published"))
 
-  let indexable = !frontmatter_flag(frontmatter, "noindex")
-
-  Document(title:, description:, indexable:, markdown:)
+  case valid_calendar_date(published) {
+    False -> Error(InvalidPublishedDate(published))
+    True ->
+      Ok(Document(
+        title:,
+        description:,
+        published:,
+        indexable: !metadata_flag(metadata, "noindex"),
+        markdown:,
+        metadata:,
+      ))
+  }
 }
 
-pub fn parse_featured_image(frontmatter: String) {
-  case frontmatter_value(frontmatter, "featured_image") {
+fn parse_metadata(frontmatter: String) -> Result(Metadata, ParseError) {
+  case yamleam.parse_raw(frontmatter) {
+    Error(error) -> Error(InvalidYaml(error))
+    Ok(YamlMap(entries)) -> Ok(Metadata(dict.from_list(entries)))
+    Ok(_) -> Error(FrontmatterMustBeMapping)
+  }
+}
+
+fn required_string(
+  metadata: Metadata,
+  key: String,
+) -> Result(String, ParseError) {
+  let Metadata(values:) = metadata
+
+  case dict.get(values, key) {
+    Error(_) -> Error(MissingRequiredField(key))
+    Ok(YamlString(value)) ->
+      case string.is_empty(string.trim(value)) {
+        True -> Error(EmptyRequiredField(key))
+        False -> Ok(value)
+      }
+    Ok(_) -> Error(RequiredFieldMustBeString(key))
+  }
+}
+
+pub fn parse_featured_image(metadata: Metadata) {
+  case metadata_string(metadata, "featured_image") {
     Error(_) -> None
     Ok(src) -> {
-      let assert Ok(alt) = frontmatter_value(frontmatter, "featured_alt")
+      let assert Ok(alt) = metadata_string(metadata, "featured_alt")
 
       Some(FeaturedImage(src:, alt:))
     }
   }
 }
 
-pub fn frontmatter_value(
-  frontmatter: String,
-  key: String,
-) -> Result(String, Nil) {
-  frontmatter
-  |> string.split("\n")
-  |> list.find_map(fn(line) {
-    case string.split_once(line, on: ":") {
-      Ok(#(found_key, value)) ->
-        case string.trim(found_key) == key {
-          True -> Ok(string.trim(value))
-          False -> Error(Nil)
-        }
-      _ -> Error(Nil)
-    }
-  })
+pub fn metadata_string(metadata: Metadata, key: String) -> Result(String, Nil) {
+  let Metadata(values:) = metadata
+
+  case dict.get(values, key) {
+    Ok(YamlString(value)) -> Ok(value)
+    _ -> Error(Nil)
+  }
 }
 
-pub fn frontmatter_list(frontmatter: String, key: String) -> List(String) {
-  case frontmatter_value(frontmatter, key) {
+pub fn metadata_list(metadata: Metadata, key: String) -> List(String) {
+  case metadata_string(metadata, key) {
     Error(_) -> []
     Ok(value) ->
       value
@@ -69,11 +116,50 @@ pub fn frontmatter_list(frontmatter: String, key: String) -> List(String) {
   }
 }
 
-fn frontmatter_flag(frontmatter: String, key: String) -> Bool {
-  case frontmatter_value(frontmatter, key) {
-    Ok(value) -> string.lowercase(value) == "true"
-    Error(_) -> False
+fn metadata_flag(metadata: Metadata, key: String) -> Bool {
+  let Metadata(values:) = metadata
+
+  case dict.get(values, key) {
+    Ok(YamlBool(value)) -> value
+    Ok(YamlString(value)) -> string.lowercase(value) == "true"
+    _ -> False
   }
+}
+
+fn valid_calendar_date(value: String) -> Bool {
+  case string.split(value, "-") {
+    [year_text, month_text, day_text] ->
+      case
+        string.length(year_text) == 4,
+        string.length(month_text) == 2,
+        string.length(day_text) == 2,
+        int.parse(year_text),
+        int.parse(month_text),
+        int.parse(day_text)
+      {
+        True, True, True, Ok(year), Ok(month), Ok(day) ->
+          day >= 1 && day <= days_in_month(year, month)
+        _, _, _, _, _, _ -> False
+      }
+    _ -> False
+  }
+}
+
+fn days_in_month(year: Int, month: Int) -> Int {
+  case month {
+    1 | 3 | 5 | 7 | 8 | 10 | 12 -> 31
+    4 | 6 | 9 | 11 -> 30
+    2 ->
+      case is_leap_year(year) {
+        True -> 29
+        False -> 28
+      }
+    _ -> 0
+  }
+}
+
+fn is_leap_year(year: Int) -> Bool {
+  year % 4 == 0 && { year % 100 != 0 || year % 400 == 0 }
 }
 
 pub fn expand_shortcodes(

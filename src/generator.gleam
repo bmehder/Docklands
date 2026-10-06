@@ -61,7 +61,7 @@ fn build_route(
 ) -> Nil {
   let assert Ok(source_markdown) = simplifile.read(from: source_path)
 
-  let Document(title:, description:, indexable:, markdown:) =
+  let assert Ok(Document(title:, description:, indexable:, markdown:, ..)) =
     content.parse_document(source_markdown)
 
   let relative_path = route_relative_path(source_path)
@@ -168,14 +168,17 @@ fn load_item(collection: Collection, source_filename: String) -> Item {
 
   let slug = string.drop_end(source_filename, 3)
 
-  let Document(title:, description:, indexable:, markdown:) =
-    content.parse_document(source_markdown)
+  let assert Ok(Document(
+    title:,
+    description:,
+    published:,
+    indexable:,
+    markdown:,
+    metadata:,
+  )) = content.parse_document(source_markdown)
 
-  let #(frontmatter, _) = mork.split_frontmatter_from_input(source_markdown)
-
-  let assert Ok(published) = content.frontmatter_value(frontmatter, "published")
-  let tags = content.frontmatter_list(frontmatter, "tags")
-  let featured_image = content.parse_featured_image(frontmatter)
+  let tags = content.metadata_list(metadata, "tags")
+  let featured_image = content.parse_featured_image(metadata)
 
   Item(
     slug:,
@@ -434,13 +437,19 @@ pub fn write_discovery_files(
     |> list.filter(fn(source) {
       let assert Ok(source_markdown) = simplifile.read(from: source)
 
-      let Document(indexable:, ..) = content.parse_document(source_markdown)
+      let assert Ok(Document(indexable:, ..)) =
+        content.parse_document(source_markdown)
 
       let path = route_path(route_relative_path(source))
       indexable && route_is_indexable(path, loaded_collections)
     })
-    |> list.map(fn(source) { route_path(route_relative_path(source)) })
-    |> list.map(sitemap_url(_, None))
+    |> list.map(fn(source) {
+      let assert Ok(source_markdown) = simplifile.read(from: source)
+      let assert Ok(Document(published:, ..)) =
+        content.parse_document(source_markdown)
+
+      sitemap_url(route_path(route_relative_path(source)), Some(published))
+    })
 
   let item_urls =
     loaded_collections

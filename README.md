@@ -10,6 +10,8 @@ A small, content-first static-site starter built with Gleam, Markdown, Tailwind 
 
 Docklands is a reference project rather than a generalized framework. It demonstrates how to build a complete content-led website while keeping the source and generated output easy to understand.
 
+Docklands 2.0.0 supports version 1.0.0 of the [Markdown content contract](https://github.com/bmehder/themarkdownworks/blob/main/docs/markdown-contract.md): a small portable baseline shared with Chippy, CheekyCMS, and The Markdown Works.
+
 ## Philosophy
 
 - Write pages and items primarily in Markdown.
@@ -94,7 +96,7 @@ The remaining root files configure Gleam, npm, Git, and Vercel. The root project
 
 `npm run build` performs five explicit steps:
 
-1. Gleam discovers routes and collection items, parses Markdown with Mörk, applies the shared layout, generates tag archives and discovery files, and copies static assets.
+1. Gleam discovers routes and collection items, parses YAML frontmatter with Yamleam and Markdown with Mörk, applies the shared layout, generates tag archives and discovery files, and copies static assets.
 2. Shiki replaces labelled Markdown code fences with build-time syntax-highlighted HTML. Unlabelled and unsupported code remains unchanged, and no highlighting JavaScript is sent to the browser.
 3. The image script converts supported raster files beneath `assets/static/images/` to maximum-width 1000px quality-68 WebP output and derives favicon PNGs from one SVG master.
 4. Lustre's development tools bundle the isolated build-receipt widget into `dist/assets/build_receipt.js`.
@@ -104,14 +106,19 @@ The final `dist/` directory can be served by any static host.
 
 ## Routes and frontmatter
 
-A route's location determines its URL. For example, `content/routes/studio/index.md` becomes `/studio/`. Every page requires:
+A route's location determines its URL. For example, `content/routes/studio/index.md` becomes `/studio/`. Every route and collection item requires the three top-level fields in the Markdown content contract:
 
 ```yaml
 ---
 title: Studio — Docklands
 description: A useful description for search and social metadata.
+published: 2026-10-06
 ---
 ```
+
+`title` and `description` must be non-empty strings. `published` must be a real calendar date in `YYYY-MM-DD` form. Plain and quoted YAML strings have the same text value. Additional YAML fields, lists, and mappings are allowed and do not interfere with these core fields; Docklands ignores fields it does not recognize.
+
+The publication date records when the content was originally published. Collection items display it and sort newest-first. Routes include it in the generated sitemap but do not display it automatically. The unchanged shared example lives at `content/routes/portable/index.md` and builds at `/portable/`.
 
 Add `noindex: true` to omit a route or collection item from the sitemap and emit a robots `noindex` directive.
 
@@ -119,7 +126,7 @@ Add `noindex: true` to omit a route or collection item from the sitemap and emit
 
 `src/collections.gleam` defines every collection's source directory, route, shortcode, item label, and indexing policy. Docklands includes two examples: Guides for documentation and Notes for shorter architectural essays.
 
-Every collection item requires `title`, `description`, and `published` frontmatter. `featured_image` is optional; when it is present, `featured_alt` is required. Items are sorted newest-first. A standalone `{{ featured-image }}` shortcode places available artwork, while the collection index uses its configured shortcode.
+`featured_image` is optional; when it is present, `featured_alt` is required. Items are sorted newest-first. A standalone `{{ featured-image }}` shortcode places available artwork, while the collection index uses its configured shortcode.
 
 Optional `tags` use a comma-separated list such as `tags: Gleam, Markdown, Deployment`. Tags appear on item pages and collection cards, and each one produces a cross-collection archive under `/tags/<tag>/`. The generated `/tags/` index lists the complete vocabulary and the number of matching items, making existing tags easy to discover without a CMS. Docklands deliberately keeps this author-controlled rather than adding a general taxonomy configuration system.
 
@@ -158,6 +165,7 @@ Vercel rebuilds and deploys the site whenever the production branch changes. Pre
 - [Gleam](https://gleam.run/) — generation and widget language
 - [Mörk](https://mork.hexdocs.pm/) — Markdown parsing
 - [Simplifile](https://simplifile.hexdocs.pm/) — filesystem operations
+- [Yamleam](https://hexdocs.pm/yamleam/) — YAML frontmatter parsing
 - [Tailwind CSS](https://tailwindcss.com/) — static styling
 - [Lustre](https://lustre.hexdocs.pm/) — isolated interactive islands
 - [esbuild](https://esbuild.github.io/) — JavaScript bundling for the Vercel build
@@ -167,3 +175,10 @@ Vercel rebuilds and deploys the site whenever the production branch changes. Pre
 ## Deliberate non-goals
 
 Docklands currently has no client-side navigation, site-wide state, site-wide hydration, plugin system, CMS, installable PWA, or service worker. Those should appear only when a real website requirement makes them useful.
+
+## Releases
+
+- **2.0.0 — 2026-10-06:** Supports Markdown content contract 1.0.0, requires `published` on routes as well as collection items, reads actual YAML mappings, validates calendar dates, and includes the shared portability example.
+- **1.0.0 — 2026-10-05:** Documented pre-contract baseline at commit `1882ef97dbc787efc26ea8c6616e8aa5552fc2a6`.
+
+The Docklands starter version and the Markdown content contract version are independent. A customized site should record both the Docklands release and exact upstream commit it incorporated.

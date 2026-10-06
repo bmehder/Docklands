@@ -1,6 +1,7 @@
 ---
 title: About — Docklands
 description: How Docklands combines Gleam, Markdown, Tailwind CSS, and isolated Lustre islands.
+published: 2026-09-30
 ---
 
 <p class='eyebrow'>Project map</p>

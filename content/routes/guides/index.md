@@ -1,6 +1,7 @@
 ---
 title: Guides — Docklands
 description: Practical guides to building and extending a Docklands site.
+published: 2026-09-30
 ---
 
 <p class='eyebrow'>Documentation</p>
