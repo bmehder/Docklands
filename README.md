@@ -10,7 +10,7 @@ A small, content-first static-site starter built with Gleam, Markdown, Tailwind 
 
 Docklands is a reference project rather than a generalized framework. It demonstrates how to build a complete content-led website while keeping the source and generated output easy to understand.
 
-Docklands 2.0.0 supports version 1.0.0 of the [Markdown content contract](https://github.com/bmehder/themarkdownworks/blob/main/docs/markdown-contract.md): a small portable baseline shared with Chippy, CheekyCMS, and The Markdown Works.
+Docklands 2.0.1 supports version 1.0.0 of the [Markdown content contract](https://github.com/bmehder/themarkdownworks/blob/main/docs/markdown-contract.md): a small portable baseline shared with Chippy, CheekyCMS, and The Markdown Works.
 
 ## Philosophy
 
@@ -180,7 +180,4 @@ Docklands currently has no client-side navigation, site-wide state, site-wide hy
 
 ## Releases
 
-- **2.0.0 — 2026-10-06:** Supports Markdown content contract 1.0.0, requires `published` on routes as well as collection items, reads actual YAML mappings, validates calendar dates, and includes the shared portability example.
-- **1.0.0 — 2026-10-05:** Documented pre-contract baseline at commit `1882ef97dbc787efc26ea8c6616e8aa5552fc2a6`.
-
-The Docklands starter version and the Markdown content contract version are independent. A customized site should record both the Docklands release and exact upstream commit it incorporated.
+See [CHANGELOG.md](CHANGELOG.md) for notable changes and the release policy. Docklands versions independently from the Markdown content contract; a customized site should record both the Docklands release and the exact upstream commit it incorporated.
