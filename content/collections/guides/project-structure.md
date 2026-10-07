@@ -19,7 +19,7 @@ Most website changes begin in one of three places:
 
 - `content/` contains Markdown. Its `routes/` directory holds standalone pages and collection indexes; its `collections/` directory holds repeatable items such as guides and notes.
 - `assets/` contains stylesheet source, files copied as-is, and raster images optimized during the build.
-- `widgets/` is a separate Gleam project for optional browser-side Lustre islands.
+- `widgets/` contains optional browser-side islands. The included demo is a separate Gleam project using Lustre, but a site may use plain JavaScript or another focused library instead.
 
 ## Website generation
 

@@ -4,7 +4,7 @@
 
 # Docklands
 
-A small, content-first static-site starter built with Gleam, Markdown, Tailwind CSS, and optional Lustre islands.
+A small, content-first static-site starter built with Gleam, Markdown, Tailwind CSS, and optional interactive islands.
 
 **Live site:** [docklands-ssg.vercel.app](https://docklands-ssg.vercel.app)
 
@@ -18,7 +18,7 @@ Docklands 2.0.0 supports version 1.0.0 of the [Markdown content contract](https:
 - Use raw HTML when a section genuinely needs more structure.
 - Keep shared layout and generation logic in small Gleam functions.
 - Generate one static Tailwind stylesheet.
-- Add plain JavaScript or an isolated Lustre island only where useful.
+- Add plain JavaScript or an isolated interactive island only where useful.
 - Produce ordinary HTML, CSS, SVG, WebP, PNG, and page-specific JavaScript.
 
 There is no client-side router, site-wide hydration, or application shell.
@@ -136,9 +136,11 @@ Set a collection's `indexable` field to `False` to exclude its index and all ite
 
 Shortcodes expand to HTML returned by functions in `src/components.gleam` before Markdown is parsed. A shortcode expands only when it appears on a standalone line outside a fenced code block, so inline and code examples remain literal. This keeps repeated markup in one place without introducing a general template language or constructing every page through an HTML DSL.
 
-## The Lustre island
+## Interactive islands
 
-A small site-wide script reveals the back-to-top control only on long pages after the reader scrolls beyond the first viewport; it scrolls smoothly without changing the URL. Only the homepage loads the widget bundle. Lustre mounts on `#build-widget` and owns that one element; navigation, prose, collection pages, and the rest of the document remain static HTML.
+A small site-wide script reveals the back-to-top control only on long pages after the reader scrolls beyond the first viewport; it scrolls smoothly without changing the URL. Only the homepage loads the widget bundle. The demo uses Lustre because it is the author's preferred way to build a stateful island, but Docklands does not require it: plain JavaScript or another focused browser library can own the same kind of explicit DOM boundary.
+
+In the included example, Lustre mounts on `#build-widget` and owns that one element; navigation, prose, collection pages, and the rest of the document remain static HTML. You do not need to learn Lustre to build a Docklands site. See [Choosing an island](https://themarkdownworks.vercel.app/docs/islands/) for the broader decision guide.
 
 ## Images and favicons
 
@@ -167,7 +169,7 @@ Vercel rebuilds and deploys the site whenever the production branch changes. Pre
 - [Simplifile](https://simplifile.hexdocs.pm/) — filesystem operations
 - [Yamleam](https://hexdocs.pm/yamleam/) — YAML frontmatter parsing
 - [Tailwind CSS](https://tailwindcss.com/) — static styling
-- [Lustre](https://lustre.hexdocs.pm/) — isolated interactive islands
+- [Lustre](https://lustre.hexdocs.pm/) — the demo's stateful island implementation
 - [esbuild](https://esbuild.github.io/) — JavaScript bundling for the Vercel build
 - [Sharp](https://sharp.pixelplumbing.com/) — build-time image processing
 - [Shiki](https://shiki.style/) — build-time syntax highlighting

@@ -1,6 +1,6 @@
 ---
 title: Docklands — Static sites, clearly built
-description: A small, content-first static-site starter for Gleam, Markdown, Tailwind CSS, and optional Lustre islands.
+description: A small, content-first static-site starter for Gleam, Markdown, Tailwind CSS, and optional interactive islands.
 published: 2026-09-30
 ---
 
@@ -38,7 +38,7 @@ published: 2026-09-30
   <article>
     <span>03</span>
     <h3>JavaScript has boundaries</h3>
-    <p>Most pages need none. A Lustre island can own one explicit DOM node when state genuinely helps.</p>
+    <p>Most pages need none. Plain JavaScript, Lustre, or another focused library can own one explicit DOM island when state genuinely helps.</p>
   </article>
 </div>
 
@@ -85,7 +85,7 @@ published: 2026-09-30
     <article>
       <span>Interactivity</span>
       <h3>JavaScript stays optional</h3>
-      <p>Use plain JavaScript for small enhancements or mount a Lustre application into one explicit island when state earns its keep.</p>
+      <p>Use plain JavaScript for small enhancements or a focused library for one explicit island. The demo uses Lustre by preference, not as a site-wide requirement.</p>
       <a href='/guides/interactive-islands/'>Add an island <span aria-hidden='true'>→</span></a>
     </article>
   </div>
