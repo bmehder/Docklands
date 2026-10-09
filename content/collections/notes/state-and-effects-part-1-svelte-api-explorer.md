@@ -21,29 +21,36 @@ You can open the [original Svelte playground](https://svelte.dev/playground/c592
 
 `App.svelte` owns the presentation and all behavior. Its dropdown is bound to `value`; each option value is already a complete URL made from `https://cheekycms.fly.dev/` and one relative route. Selecting an option therefore changes the URL that the component is watching.
 
-Here is the original script exactly as it appeared in the first playground:
+Here is the original script from the first playground, with blank lines added for readability but no executable code changed:
 
 ```svelte
 <script>
   import routes from "./routes.js"
+
   const base = 'https://cheekycms.fly.dev/'
+
   let value = $state(base + routes.health)
   let output = $state(null)
   let loading = $state(false)
   let error = $state(null)
   let responseTime = $state(null)
+
   $effect(() => {
     const controller = new AbortController()
     const startedAt = performance.now()
+
     loading = true
     error = null
     responseTime = null
+
     fetch(value, { signal: controller.signal })
       .then(response => {
         responseTime = performance.now() - startedAt
+
         if (!response.ok) {
           throw new Error(`Request failed: ${response.status}`)
         }
+
         return response.json()
       })
       .then(data => {
@@ -56,6 +63,7 @@ Here is the original script exactly as it appeared in the first playground:
         }
       })
       .finally(() => loading = false)
+
     return () => controller.abort()
   })
 </script>
