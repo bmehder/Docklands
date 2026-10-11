@@ -1,132 +1,195 @@
 ---
-title: "State and Effects, Part 1: An API Explorer in Svelte"
-description: "Read a small Svelte 5 API explorer closely: what triggers its requests, what its state communicates, and where asynchronous work deserves extra care."
-published: 2026-10-09
+title: "State and Effects, Part 1: Where Does Change Live?"
+description: "Use a small Svelte API explorer to ask where an interface describes its state transitions, and what reactivity, components, and developer choices each contribute."
+published: 2026-10-06
 tags: JavaScript, Svelte, State, Effects, Cheeky Tester
+featured_image: /assets/images/note-state-and-effects-part-1.webp
+featured_alt: Five glass nodes linked by fine threads within a dark open enclosure
 ---
 
-<!-- Artwork TODO: this four-part series needs a distinct featured image for each installment before the series is complete. -->
+# State and Effects, Part 1: Where Does Change Live?
 
-# State and Effects, Part 1: An API Explorer in Svelte
+{{ featured-image }}
 
-This is the first of four readings of the same small API explorer. We will begin with the original Svelte 5 JavaScript implementation, then revisit the design in idiomatic Svelte JavaScript, TypeScript, and finally Gleam with Lustre.
+An interface shows us the current state. Understanding its behavior means following how that state changes: what triggers a change, which combinations of values make sense, and which asynchronous operation is still allowed to update the screen.
 
-The point is not to arrange the languages and frameworks on a podium. It is to watch where state lives, what starts an effect, and which guarantees come from our own design rather than the tool.
+This series follows one small application through JavaScript and Svelte, then TypeScript, then Gleam and Lustre. The question throughout is **where the rules for change live, and what helps us understand and enforce them**. Keeping the application familiar lets us examine what comes from organizing the code differently, what a type system can check, and what a framework coordinates. The goal is to give you questions to bring to your own applications, with concrete examples of the tradeoffs involved.
 
-You can open the [original Svelte playground](https://svelte.dev/playground/c592c1110b2a469eb915157f31117019?version=5.57.2) and an [untouched fork for the next installment](https://svelte.dev/playground/1adc48dc49c64f37bd86e3f419f59086?version=5.57.2).
+Basic JavaScript and familiarity with reactive interfaces will help with the early examples. Some Svelte knowledge is useful, but the relevant behavior is explained as we go. You do not need to know Gleam or Lustre in advance; experience with Elm or Haskell may make the later examples familiar. The series introduces the state and effect concepts through code rather than assuming you already know their terminology.
 
-## The explorer in two files
+Cheeky Tester is a compact API explorer for CheekyCMS. Choose an endpoint and it sends a request, then displays JSON, loading state, errors, and response duration. There is one Svelte component and very little code. That makes it a useful place to ask one focused question:
 
-`routes.js` is data: an object mapping 31 human-readable labels to relative CheekyCMS paths. The choices cover health, collections, singletons, filters, sorting, and limits.
+> A component can own its state, but where does it describe how that state is allowed to change?
 
-`App.svelte` owns the presentation and all behavior. Its dropdown is bound to `value`; each option value is already a complete URL made from `https://cheekycms.fly.dev/` and one relative route. Selecting an option therefore changes the URL that the component is watching.
+This example can show us how one request lifecycle is coordinated. It cannot tell us how the same approach feels across dozens of components, years of maintenance, or a large team. Those remain questions for later, not conclusions hidden inside a small demo.
 
-Here is the original script from the first playground, with blank lines added for readability but no executable code changed:
+[Run and inspect the original Svelte implementation](https://svelte.dev/playground/c592c1110b2a469eb915157f31117019?version=5.57.2).
 
-```svelte
-<script>
-  import routes from "./routes.js"
+## Five values, one interface
 
-  const base = 'https://cheekycms.fly.dev/'
+The component starts with five reactive values:
 
-  let value = $state(base + routes.health)
-  let output = $state(null)
-  let loading = $state(false)
-  let error = $state(null)
-  let responseTime = $state(null)
-
-  $effect(() => {
-    const controller = new AbortController()
-    const startedAt = performance.now()
-
-    loading = true
-    error = null
-    responseTime = null
-
-    fetch(value, { signal: controller.signal })
-      .then(response => {
-        responseTime = performance.now() - startedAt
-
-        if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`)
-        }
-
-        return response.json()
-      })
-      .then(data => {
-        output = data
-        responseTime = performance.now() - startedAt
-      })
-      .catch(cause => {
-        if (cause.name !== 'AbortError') {
-          error = cause.message
-        }
-      })
-      .finally(() => loading = false)
-
-    return () => controller.abort()
-  })
-</script>
+```js
+let value = $state(base + routes.health)
+let output = $state(null)
+let loading = $state(false)
+let error = $state(null)
+let responseTime = $state(null)
 ```
 
-## What makes the request run?
+The template renders those values declaratively: if `loading` is true, show loading; if `error` contains a message, show the failure; if `output` contains data, print the JSON.
 
-The effect runs after the component mounts. During that run it synchronously reads `value` in `fetch(value, ...)`, so Svelte records `value` as a reactive dependency. Choosing another endpoint changes `value`, which schedules another run.
+The changes that produce each snapshot are imperative assignments. At the beginning of a request, the effect resets three fields:
 
-The assignments to `loading`, `error`, and `responseTime` do not make those fields dependencies. Svelte tracks reactive values that an effect *reads synchronously*; merely writing a field does not create a feedback loop. Values read later in promise callbacks are asynchronous reads and are not tracked as effect dependencies either.
+```js
+loading = true
+error = null
+responseTime = null
+```
 
-Before the effect runs again, its cleanup calls `controller.abort()`. The same cleanup runs when the component is destroyed. This gives the explorer automatic cancellation when someone switches endpoints or leaves the component. It is not a user-facing Cancel button, and there is no Retry button in this version.
+After a successful response is parsed, a callback changes two others:
 
-Svelte's current [`$effect` documentation](https://svelte.dev/docs/svelte/$effect) explicitly lists network requests as a use for effects. It also says that, generally, updating state inside effects can make code more complicated and can create never-ending cycles. Both points matter here. Fetching in an effect is supported, and the code avoids a reactive loop because its dependency is the URL it reads—not the state it writes. The broader caution still invites us to examine how much request state one effect coordinates.
+```js
+output = data
+responseTime = performance.now() - startedAt
+```
 
-## Abort is not the whole stale-work story
+Failure and completion have their own assignments:
 
-Aborting the previous request is valuable: it tells the browser that request A is no longer wanted. It does not, by itself, make every callback belonging to A unable to change shared state.
+```js
+if (cause.name !== 'AbortError') {
+  error = cause.message
+}
+```
 
-From code inspection, there is a possible lifecycle race:
+```js
+.finally(() => loading = false)
+```
+
+None of this is concealed from the reader. The assignments are ordinary JavaScript, close to the asynchronous events that produce them. But there is no single description of “request started,” “request succeeded,” or “request failed.” A reader reconstructs those transitions by following the effect and its callbacks.
+
+Svelte makes this combination natural: imperative changes to reactive values, followed by declarative rendering of the latest values.
+
+## The coordination chain
+
+Selecting an endpoint changes the bound URL. The `$effect` reads that URL synchronously, so Svelte records it as a dependency. Changing the selection therefore starts this chain:
+
+```text
+selection changes
+    ↓
+value receives the new URL
+    ↓
+Svelte detects a tracked dependency
+    ↓
+the effect runs
+    ↓
+fetch starts
+    ↓
+an asynchronous callback assigns state
+    ↓
+Svelte updates the rendered output
+```
+
+Svelte coordinates dependency tracking, schedules the effect, updates the DOM, and runs the effect's cleanup before a rerun or component destruction. The developer coordinates the meaning of the state fields, the assignments made at each asynchronous step, and the policy for obsolete requests.
+
+Those responsibilities should not be blurred together. The framework gives the program a reactive mechanism; it does not decide the application's transitions for us.
+
+## Ownership is not the same as transformation
+
+All five values belong to one component. That boundary limits which code can access them and keeps the implementation local. Component encapsulation is one effective way to manage mutable state: reduce the number of places that can reach it.
+
+A different question is which transformations of that state are valid. Encapsulation answers “who can change this?” A transition function or named operation can answer “how may it change?” The two approaches can coexist. A component can own state while delegating its state decisions to explicit transformations.
+
+This app has only one component, so it is not evidence for or against a multi-component Svelte architecture. Svelte runes can also live in `.svelte.js` and `.svelte.ts` modules outside components. Local component state is the choice visible here, not the only organizational tool Svelte provides.
+
+The interesting point is narrower: state does not need to escape its owner before its transitions become distributed across several assignments and callbacks.
+
+## One request lifecycle, spread across fields
+
+`output`, `loading`, `error`, and `responseTime` are separate values, but together they describe one request lifecycle. Their combinations carry meaning:
+
+- Loading with no result can mean the first request is pending.
+- Loading with existing output can mean a new request is pending while old data remains visible.
+- An error alongside older output can preserve useful context after a failure.
+- No loading, error, or output can describe the initial render.
+
+Some combinations may be accidental; others may be deliberate interface policy. Keeping old output during loading is not automatically invalid. It does, however, raise an attribution question when the selected URL belongs to request B and the displayed JSON still belongs to request A.
+
+The aim of state modeling is to represent the combinations the interface actually needs. If loading, success, and failure are mutually exclusive, a single tagged value can express that choice. If the interface retains an earlier response while another request loads, the model needs to represent both facts. Choosing the intended behavior comes before choosing the representation. [Make Impossible States Impossible with PHP Enums](/notes/make-impossible-states-impossible/) explores the same principle in another setting.
+
+The same architectural question appears in smaller details. The component displays `200 OK` when it is neither loading nor showing an error, rather than retaining the actual response status. It measures elapsed time once at response headers and overwrites it after JSON parsing. These are not merely labels to fix; they show that the meaning of the request is distributed between state assignments and rendering conditions.
+
+## Ownership also changes over time
+
+Asynchronous work adds another kind of ownership: which request is still allowed to update shared state?
+
+The effect returns cleanup that aborts its controller before the next run and on destruction. That asks the browser to cancel obsolete work. From code inspection, there is still a possible sequence worth examining:
 
 1. Request A starts and sets `loading = true`.
-2. The selection changes, so cleanup aborts A.
-3. Request B starts and sets `loading = true`.
-4. A's promise chain reaches its unconditional `finally` and sets `loading = false` while B is still pending.
+2. A new selection aborts A, then request B starts and sets `loading = true`.
+3. A's promise chain reaches its unconditional `finally`.
+4. A sets `loading = false` while B may still be pending.
 
-This is a risk to investigate, not a claim that every quick selection reproduces it. Promise and abort timing matter. The important distinction is conceptual: **cancelling obsolete work** and **ignoring callbacks from obsolete work** are related responsibilities, but they are not identical.
+This is a possible lifecycle race, not a claim that every rapid selection reproduces it. Timing matters. It illustrates the larger issue precisely: owning the current component state is not enough; an asynchronous operation also needs a policy for whether it still owns permission to commit a transition.
 
-## What does the screen mean while loading?
+The problem is not unique to Svelte, and a message-based architecture would not solve it automatically. When requests can overlap and obsolete results should not replace the current state, the implementation needs a way to decide which request may still update it. Cancellation and request identity are two tools for expressing that policy.
 
-Starting a request clears the error and timing, but it does not clear `output`. The previous response can remain visible beneath the newly selected URL while the next request loads.
+## What would an explicit transition look like?
 
-That may be a deliberate display policy. Keeping useful data on screen can feel steadier than replacing it with an empty panel. The tradeoff is attribution: the URL describes request B while the JSON may still belong to request A. A loading label, a retained-response label, or clearing the output would each communicate a different policy.
+One alternative is to name events and make the state decision in a pure function. Svelte can support this style; it does not require changing frameworks.
 
-The template also displays `200 OK` whenever it is neither loading nor showing an error. Because the component does not retain the actual response status, that label describes an assumption rather than recorded response data. It can even appear in the initial render before the first request has completed.
+Here is conceptual JavaScript, not a completed rewrite of Cheeky Tester:
 
-## What exactly does the timer measure?
+```js
+function update(request, message) {
+  switch (message.type) {
+    case 'started':
+      return { tag: 'loading' }
 
-The first response callback records elapsed time when the response headers arrive. On a successful response, the following callback overwrites that number after the body has been read and parsed as JSON.
+    case 'succeeded':
+      return {
+        tag: 'success',
+        data: message.data,
+        elapsed: message.elapsed
+      }
 
-The final displayed value therefore means approximately “time until parsed JSON was available” for a successful request. For a non-OK response it means “time until response headers were available.” Neither definition is inherently unsuitable, but a metric is easier to reason about when its endpoint is consistent and named.
+    case 'failed':
+      return {
+        tag: 'failure',
+        message: message.error
+      }
 
-## Several fields, several possible combinations
+    default:
+      return request
+  }
+}
+```
 
-The request is represented by independent fields:
+The imperative boundary could still assign the result to reactive state:
 
-- `output`
-- `loading`
-- `error`
-- `responseTime`
+```js
+request = update(request, {
+  type: 'started'
+})
+```
 
-That permits combinations such as loading with earlier output, or an error alongside output from a previous success. Those combinations are not automatically invalid. Some express the retention policy described above. The design question is whether every combination has an intentional meaning that the interface communicates clearly.
+This changes where a reader finds the state decisions. Instead of reconstructing them from assignments in several callbacks, the reader can inspect one transition function. Because the function only maps an old value and a message to a new value, its decisions can be tested without mounting a component or making a request.
 
-This connects to [Make Impossible States Impossible with PHP Enums](/notes/make-impossible-states-impossible/), but with an important difference. The stoplight example has a small closed set of mutually exclusive states. A request interface may intentionally combine current activity with retained data. Before changing the representation, we have to decide what the product is supposed to say.
+The HTTP request, clock, cancellation, and connection between effects and messages still require integration code and integration tests. With this structure, a request callback reports what happened, and the transition function decides how the state changes in response. The effect still performs the external work; the state decision has an identifiable home.
 
-## Questions for Part 2
+That structure has a cost: more names, more messages, more wiring, and another concept for a reader to learn. For a component this small, it might clarify the program or merely restate obvious control flow at greater length. That is the fair comparison question, not a conclusion we can answer in advance.
 
-The untouched fork gives us somewhere to explore, but not a predetermined answer:
+## The experiment ahead
 
-- Should request state be one coherent value, several coordinated fields, or a mixture?
-- Should changing the selected endpoint trigger immediately, or should the user explicitly submit?
-- How should callbacks prove that they still belong to the current request?
-- Should earlier output remain visible during loading and after an error, and how should it be labelled?
-- Which response status and timing measurements should the interface retain?
+This series compares four core implementations across five articles:
 
-Part 2 will make those policies explicit in idiomatic Svelte JavaScript. The findings from that implementation—not a preference for mutation, immutability, Svelte, or any later tool—will guide what comes next.
+1. The original Svelte JavaScript
+2. A revised Svelte JavaScript design
+3. The same revised runtime design with TypeScript
+4. An idiomatic Gleam and Lustre design
+
+The comparison separates developer choices from language and framework contributions. Revising the Svelte version can show what changes when we organize the same JavaScript differently. TypeScript can then show which conventions become static guarantees. Gleam and Lustre can show what custom types, messages, pure updates, and runtime-managed effects look like in their native architecture—including their costs. Part 4 also compares multiple ways to place the Lustre version's HTTP boundary, while Part 5 draws the findings together rather than adding a fifth implementation.
+
+Part 2 stays in Svelte and JavaScript. Its question is not “how do we fix every detail?” It is whether naming the request lifecycle, choosing explicit triggers, and making stale-result ownership visible improves the path between snapshots enough to justify the added structure.
+
+Continue to [Part 2: Modeling a Request in Svelte](/notes/state-and-effects-part-2-modeling-a-request-in-svelte/).
