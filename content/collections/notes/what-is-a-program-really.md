@@ -1245,3 +1245,6 @@ We've spent this entire article reducing a program to a composition of values.
 Now we have to confront the one thing we've been ignoring.
 
 **What happens when our program actually does something?**
+
+Continue with [And Then Somebody Opened a File](https://docklands-ssg.vercel.app/notes/and-then-somebody-opened-a-file/).
+
