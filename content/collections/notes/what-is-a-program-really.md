@@ -27,9 +27,7 @@ How much do you actually need?
 
 We tend to think of programs as collections of instructions. Variables, functions, loops, conditionals, classes, methods, exceptions, and all the other machinery our programming languages provide.
 
-But those are features of programming languages.
-
-I'm asking about the program itself.
+Those are features of programming languages. I'm asking about the program itself.
 
 What if we stripped away the syntax, the language-specific abstractions, and the conveniences we've accumulated over decades of software development?
 
@@ -77,11 +75,7 @@ Or:
 }
 ```
 
-We've introduced arrays and objects, but we haven't fundamentally changed what we're working with.
-
-We still have values.
-
-Some are simple. Others are composed of smaller values.
+We've introduced arrays and objects, but we haven't fundamentally changed what we're working with. We still have values: some simple, others composed of smaller values.
 
 Mathematically, we can describe a collection of values as a set:
 
@@ -113,9 +107,7 @@ then:
 A \times B = \{(1,a), (1,b), (2,a), (2,b)\}
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">a</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">a</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)}</span></span></span></span></span></div>
 
-We've constructed a more elaborate collection of possible values from two simpler collections.
-
-Nothing particularly surprising.
+We've constructed a more elaborate collection of possible values from two simpler collections. Nothing particularly surprising.
 
 But there's a problem.
 
@@ -213,15 +205,11 @@ Look familiar?
 
 It's our lookup table.
 
-A rather large lookup table.
-
-Infinitely large, in fact.
+An infinitely large lookup table, in fact.
 
 We couldn't possibly store every entry in a computer's memory. But we don't need to.
 
-The expression <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>x</mi></mrow><annotation encoding="application/x-tex">2x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span><span class="mord mathnormal">x</span></span></span></span> gives us a compact way to describe every association.
-
-Instead of storing the answers, we calculate them when they're needed.
+The expression <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>x</mi></mrow><annotation encoding="application/x-tex">2x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span><span class="mord mathnormal">x</span></span></span></span> gives us a compact way to describe every association. Instead of storing the answers, we calculate them when they're needed.
 
 You might imagine it as a *lazy lookup table*: a table whose entries don't have to be written down in advance.
 
@@ -262,11 +250,7 @@ The implementations differ. The underlying associations do not.
 
 > Of course, real programming languages have practical details. JavaScript numbers aren't mathematical integers, and floating-point arithmetic introduces behavior that our simple equations don't capture.
 
-But those are properties of the implementation.
-
-We're investigating the mathematical idea underneath it.
-
-And that idea is remarkably simple.
+Those are properties of the implementation. We're investigating the mathematical idea underneath it, and that idea is remarkably simple.
 
 A function maps values to values.
 
@@ -276,9 +260,7 @@ That's it.
 
 This is where our intuition starts working against us.
 
-Programmers often think of functions as little machines.
-
-You put something in. The machine does some work. Something comes out.
+Programmers often think of functions as little machines: you put something in, the machine does some work, and something comes out.
 
 And that's a perfectly reasonable way to think about executing a function.
 
@@ -292,15 +274,9 @@ f(x) = x^2
 
 Mathematically, this function associates every integer with its square.
 
-The association between 3 and 9 doesn't depend on whether anybody calculates it.
+The association between 3 and 9 doesn't depend on whether anybody calculates it, whether a computer is running, or even whether somebody has written the function down.
 
-It doesn't depend on whether a computer is running.
-
-It doesn't even depend on whether somebody has written the function down.
-
-The relationship is defined mathematically.
-
-Our program is simply one way of expressing and evaluating it.
+The relationship is defined mathematically. Our program is simply one way of expressing and evaluating it.
 
 This gives us two perspectives on the same function.
 
@@ -308,9 +284,7 @@ This gives us two perspectives on the same function.
 
 **Mathematically**, we can ask which output corresponds to a given input.
 
-The first perspective concerns execution.
-
-The second concerns meaning.
+The first perspective concerns execution; the second concerns meaning.
 
 For our investigation, the second is particularly interesting.
 
@@ -372,9 +346,7 @@ We can write them as lookup tables:
 
 <table><thead><tr><th>Input</th><th>Function 1</th><th>Function 2</th><th>Function 3</th><th>Function 4</th></tr></thead><tbody><tr><td>1</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr><tr><td>2</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td></tr></tbody></table>
 
-Each column describes a different function.
-
-Mathematically:
+Each column describes a different function. Mathematically:
 
 <div class="article-equation"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>f</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mi>Y</mi><mi>e</mi><mi>s</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mi>Y</mi><mi>e</mi><mi>s</mi><mo stretchy="false">)</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">
 f_1 = \{(1,Yes),(2,Yes)\}
@@ -392,9 +364,7 @@ f_3 = \{(1,No),(2,Yes)\}
 f_4 = \{(1,No),(2,No)\}
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">4</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal">o</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal">o</span><span class="mclose">)}</span></span></span></span></span></div>
 
-Now here's the interesting part.
-
-We can collect those functions into another set.
+Now here's the interesting part: we can collect those functions into another set.
 
 <div class="article-equation"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>F</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>f</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>f</mi><mn>2</mn></msub><mo separator="true">,</mo><msub><mi>f</mi><mn>3</mn></msub><mo separator="true">,</mo><msub><mi>f</mi><mn>4</mn></msub><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">
 F = \{f_1, f_2, f_3, f_4\}
@@ -434,15 +404,9 @@ But because there's a perfectly coherent mathematical model in which functions a
 
 > We should distinguish the mathematical model from the programming-language feature. Not every language exposes functions as first-class runtime values, and a mathematical function isn't identical to every detail of a function object in JavaScript.
 
-Nevertheless, the connection is real.
+Nevertheless, the connection is real, and it gives us a much better explanation than simply declaring that functions are first-class citizens and moving on.
 
-And it gives us a much better explanation than simply declaring that functions are first-class citizens and moving on.
-
-A function is a mapping.
-
-A mapping can be treated as a mathematical object.
-
-And in languages that support it, a function can be represented as a value.
+A function is a mapping, and a mapping can be treated as a mathematical object. In languages that support it, a function can be represented as a value.
 
 So we've introduced something to transform our values.
 
@@ -491,11 +455,7 @@ f(x) =
 \end{cases}
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">{</span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">&quot;You can vote&quot;</span></span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">&quot;You cannot vote&quot;</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord">18</span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord">18</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
 
-We've defined a piecewise function.
-
-For every input, there's exactly one corresponding output.
-
-We're still describing a mapping.
+We've defined a piecewise function: for every input, there's exactly one corresponding output. We're still describing a mapping.
 
 The conditional expression in JavaScript is one way to implement that mapping.
 
@@ -551,9 +511,7 @@ But the point stands.
 
 **We can represent selection through function application.**
 
-A language's conditional syntax is useful. Often much more readable.
-
-But it isn't the only way to express a choice.
+A language's conditional syntax is useful and often much more readable, but it isn't the only way to express a choice.
 
 And our mathematical model hasn't required a fundamentally new kind of object.
 
@@ -611,13 +569,7 @@ let rec map f xs =
 
 If you're unfamiliar with OCaml, don't worry. The idea is straightforward.
 
-The function accepts another function, `f`, and a list, `xs`.
-
-It examines the list.
-
-If the list is empty, it returns an empty list.
-
-Otherwise, it applies `f` to the first element and recursively processes the remaining elements.
+The function accepts another function, `f`, and a list, `xs`. If the list is empty, it returns an empty list; otherwise, it applies `f` to the first element and recursively processes the remaining elements.
 
 We can express the same definition mathematically:
 
@@ -631,23 +583,17 @@ map(f, x :: xs) = f(x) :: map(f, xs)
 
 Here, `::` means constructing a list by placing an element at its front.
 
-Notice what we haven't described.
+Notice what we haven't described:
 
-We haven't specified a loop counter.
-
-We haven't introduced a mutable accumulator.
-
-We haven't instructed the computer to jump backward to an earlier statement.
+- A loop counter.
+- A mutable accumulator.
+- An instruction to jump backward to an earlier statement.
 
 We've simply defined the result in terms of smaller instances of the same problem.
 
 > The programming language still needs a way to evaluate this definition. Recursion has operational consequences, including stack usage and termination.
 
-But mathematically, we've described another mapping.
-
-A function from lists to lists.
-
-And because `map` accepts a function, it's a higher-order function.
+Mathematically, we've described another mapping: a function from lists to lists. Because `map` accepts a function, it's a higher-order function.
 
 Which means?
 
@@ -679,11 +625,7 @@ But what happens when <span class="katex"><span class="katex-mathml"><math xmlns
 
 Our function isn't defined there.
 
-We have a few choices.
-
-We could restrict the domain to exclude zero denominators.
-
-Or we could expand the possible outputs to include failure.
+We have a few choices. We could restrict the domain to exclude zero denominators, or expand the possible outputs to include failure.
 
 Imagine a result that can be either:
 
@@ -709,11 +651,7 @@ Mathematically, we can describe its output type as a sum:
 Result(A,E)=A+E
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mord mathnormal">es</span><span class="mord mathnormal">u</span><span class="mord mathnormal">lt</span><span class="mopen">(</span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span></span></div>
 
-The plus sign here doesn't mean numerical addition.
-
-It describes a choice between two distinct possibilities.
-
-A successful value belonging to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>, or an error belonging to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span>.
+The plus sign here describes a choice between two distinct possibilities: a successful value belonging to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>, or an error belonging to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span>. It doesn't mean numerical addition.
 
 Our function becomes:
 
@@ -725,11 +663,7 @@ And now every pair of inputs can produce a well-defined result, including divisi
 
 We've modeled failure as data.
 
-The error is a value.
-
-The result is a value.
-
-And the function that produces it is still a mapping.
+The error and the result are values, and the function that produces them is still a mapping.
 
 > This doesn't mean every real-world failure automatically becomes harmless. A computer can run out of memory, a process can be terminated, and a computation can fail to terminate.
 
@@ -745,19 +679,12 @@ One more apparent exception that turns out to be a value.
 
 ## Maybe We're Asking the Wrong Question
 
-Let's reconsider what we've done.
+Let's reconsider what we've done. We started with simple values and constructed more elaborate ones. Then we needed:
 
-We started with simple values.
-
-Then we constructed more elaborate values.
-
-We needed transformations, so we introduced functions.
-
-We needed decisions, so we explored functions that select between alternatives.
-
-We needed repetition, so we defined recursive functions.
-
-We needed to represent failure, so we constructed values that distinguish success from error.
+- Transformations, so we introduced functions.
+- Decisions, so we explored functions that select between alternatives.
+- Repetition, so we defined recursive functions.
+- Failure, so we constructed values that distinguish success from error.
 
 Every time, the mathematical description remained surprisingly consistent.
 
@@ -848,11 +775,7 @@ fn opposite(direction) {
 }
 ```
 
-The type describes the possible values.
-
-The function describes the mapping.
-
-And the compiler can check whether our implementation respects the type.
+The type describes the possible values, the function describes the mapping, and the compiler can check whether our implementation respects the type.
 
 For example, if we introduce a fifth direction, the compiler can help identify pattern matches that no longer handle every possibility.
 
@@ -898,11 +821,7 @@ And they're the building blocks of algebraic data types.
 
 But for understanding ordinary algebraic data types, the set interpretation is remarkably useful.
 
-We can construct types from simpler types.
-
-Just as we construct values from simpler values.
-
-And those types describe the possible inputs and outputs of our functions.
+We can construct types from simpler types, just as we construct values from simpler values. Those types describe the possible inputs and outputs of our functions.
 
 Which brings us back to our mappings.
 
@@ -950,13 +869,7 @@ It helps determine whether the pieces of our program fit together according to t
 
 And when we model our domain with carefully constructed types, those rules can become surprisingly expressive.
 
-We can describe not only what values exist, but which combinations of values are possible.
-
-We can distinguish one kind of result from another.
-
-We can represent different states of a process.
-
-We can make certain invalid combinations impossible to construct.
+We can describe not only what values exist, but which combinations of values are possible. This lets us distinguish kinds of results, represent different states of a process, and make certain invalid combinations impossible to construct.
 
 But let's not wander too far into type-driven design.
 
@@ -1069,13 +982,7 @@ Its type is:
 program : \mathbb{Z} \rightarrow \mathbb{Z}
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mord mathnormal">ro</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">am</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6889em;"></span><span class="mord mathbb">Z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6889em;"></span><span class="mord mathbb">Z</span></span></span></span></span></div>
 
-We could pass this function to another function.
-
-We could store it in a collection.
-
-We could compose it with additional functions.
-
-We could give it a different name.
+We could pass this function to another function, store it in a collection, compose it with additional functions, or give it a different name.
 
 And mathematically, we could describe its entire input-output relationship as:
 
@@ -1137,9 +1044,7 @@ A pure function associates inputs with outputs without producing externally obse
 
 Given the same input, it produces the same result.
 
-It doesn't secretly modify some unrelated state.
-
-It doesn't depend on the current time or the contents of a file.
+It doesn't secretly modify unrelated state or depend on the current time or the contents of a file.
 
 And when such functions are composed, the resulting computation remains pure.
 
@@ -1165,11 +1070,7 @@ That's a remarkably powerful way to think about programming.
 
 Instead of seeing a program primarily as a sequence of instructions, we can see it as a composition of mathematical relationships.
 
-The implementation tells the computer how to evaluate those relationships.
-
-The mathematical model tells us what they mean.
-
-And the types help describe which compositions make sense.
+The implementation tells the computer how to evaluate those relationships, the mathematical model tells us what they mean, and the types help describe which compositions make sense.
 
 ## We Didn't Invent Anything
 
@@ -1191,37 +1092,22 @@ We've constructed something elaborate from simpler mathematical objects.
 
 And perhaps that shouldn't surprise us.
 
-Look around.
+Look around:
 
-A computer is a composition of components.
-
-A song is a composition of notes, rhythms, and harmonies.
-
-A painting is a composition of colors, shapes, and textures.
-
-A building is a composition of materials arranged according to structural relationships.
+- A computer is a composition of components.
+- A song is a composition of notes, rhythms, and harmonies.
+- A painting is a composition of colors, shapes, and textures.
+- A building is a composition of materials arranged according to structural relationships.
 
 The complexity of the result doesn't require its components to become something fundamentally different.
 
 Composition is everywhere.
 
-It was happening long before anybody invented a programming language.
+It was happening long before anybody invented a programming language, a computer, or the word *algorithm*.
 
-Long before anybody invented a computer.
+Nature doesn't need a `for` loop to describe a repeating pattern, and a tree doesn't need a class definition to have branches. The laws of mathematics don't depend on whether a programming language supports pattern matching.
 
-Long before anybody invented the word *algorithm*.
-
-Nature doesn't need a `for` loop to describe a repeating pattern.
-
-A tree doesn't need a class definition to have branches.
-
-And the laws of mathematics don't depend on whether a programming language supports pattern matching.
-
-Those are human inventions.
-
-Useful inventions, certainly.
-
-But inventions nonetheless.
+Those are human inventions—useful ones, certainly, but inventions nonetheless.
 
 The relationships they help us express are more fundamental than the syntax.
 
@@ -1251,13 +1137,7 @@ Among other things, it studies objects and the relationships between them, with 
 
 One familiar example is the category **Set**.
 
-Its objects are sets.
-
-Its morphisms are functions between sets.
-
-Those functions can be composed, provided their domains and codomains line up.
-
-And every set has an identity function.
+Its objects are sets, and its morphisms are functions between sets. Those functions can be composed, provided their domains and codomains line up, and every set has an identity function.
 
 <div class="article-equation"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>i</mi><msub><mi>d</mi><mi>A</mi></msub><mo>:</mo><mi>A</mi><mo>→</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">
 id_A : A \rightarrow A
@@ -1305,13 +1185,7 @@ Except values.
 
 We've constructed a rather elegant little universe.
 
-Values belong to sets.
-
-Functions map between sets.
-
-Functions compose into other functions.
-
-Types describe the possibilities.
+Values belong to sets, functions map between sets, and functions compose into other functions. Types describe the possibilities.
 
 And a pure program can itself be understood as a value.
 
@@ -1321,13 +1195,7 @@ Everything is predictable.
 
 Everything is mathematical.
 
-Then somebody asks our program to save a file.
-
-Or read a database.
-
-Or display something on a screen.
-
-Or tell us what time it is.
+Then somebody asks our program to save a file, read a database, display something on a screen, or tell us what time it is.
 
 Consider:
 
@@ -1367,15 +1235,10 @@ There are sophisticated ways to model computations that interact with the outsid
 
 But those models introduce questions we've deliberately avoided.
 
-What happens when a computation changes something?
-
-What does it mean for a function to depend on the outside world?
-
-Can we represent effects as values?
-
-Can we compose them?
-
-And if we can, does our original argument survive?
+- What happens when a computation changes something?
+- What does it mean for a function to depend on the outside world?
+- Can we represent effects as values and compose them?
+- And if we can, does our original argument survive?
 
 We've spent this entire article reducing a program to a composition of values.
 
