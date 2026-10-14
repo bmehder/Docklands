@@ -2,6 +2,7 @@
 title: "State and Effects, Part 2: Modeling a Request in Svelte"
 description: "Revise the Svelte API explorer to give its request lifecycle one value, one named operation, and a clearer path between events and state."
 published: 2026-10-07
+series_label: "State and Effects · Part 2 of 5"
 tags: JavaScript, Svelte, State, Effects, Cheeky Tester
 featured_image: /assets/images/note-state-and-effects-part-2.webp
 featured_alt: Teal geometric pieces grouped in a central tray with four separate tiles around it

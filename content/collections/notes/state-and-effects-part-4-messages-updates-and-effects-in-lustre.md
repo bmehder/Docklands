@@ -2,6 +2,7 @@
 title: "State and Effects, Part 4: Messages, Updates, and Effects in Lustre"
 description: "Rebuild the API explorer with Gleam and Lustre, then compare custom and packaged HTTP boundaries without moving application policy with them."
 published: 2026-10-09
+series_label: "State and Effects · Part 4 of 5"
 tags: Gleam, Lustre, State, Effects, Cheeky Tester
 featured_image: /assets/images/note-state-and-effects-part-4.webp
 featured_alt: Teal message beads travel through a central chamber and across a gap toward a separate amber mechanism

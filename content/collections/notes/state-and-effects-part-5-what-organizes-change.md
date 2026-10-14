@@ -2,6 +2,7 @@
 title: "State and Effects, Part 5: What Organizes Change?"
 description: "Draw together the Svelte, TypeScript, Gleam, and Lustre experiments by asking which parts of an application describe state, transitions, effects, and ownership."
 published: 2026-10-10
+series_label: "State and Effects · Part 5 of 5"
 tags: JavaScript, TypeScript, Svelte, Gleam, Lustre, State, Effects, Cheeky Tester
 featured_image: /assets/images/note-state-and-effects-part-5.webp
 featured_alt: Six equal dark frames show different arrangements of glass pieces and connecting threads around an open center

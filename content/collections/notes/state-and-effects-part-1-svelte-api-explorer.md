@@ -2,6 +2,7 @@
 title: "State and Effects, Part 1: Where Does Change Live?"
 description: "Use a small Svelte API explorer to ask where an interface describes its state transitions, and what reactivity, components, and developer choices each contribute."
 published: 2026-10-06
+series_label: "State and Effects · Part 1 of 5"
 tags: JavaScript, Svelte, State, Effects, Cheeky Tester
 featured_image: /assets/images/note-state-and-effects-part-1.webp
 featured_alt: Five glass nodes linked by fine threads within a dark open enclosure

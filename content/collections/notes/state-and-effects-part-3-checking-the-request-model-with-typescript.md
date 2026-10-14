@@ -2,6 +2,7 @@
 title: "State and Effects, Part 3: Checking the Request Model with TypeScript"
 description: "Add TypeScript to the Svelte API explorer and examine what checked state shapes contribute without changing how the application coordinates change."
 published: 2026-10-08
+series_label: "State and Effects · Part 3 of 5"
 tags: TypeScript, Svelte, State, Effects, Cheeky Tester
 featured_image: /assets/images/note-state-and-effects-part-3.webp
 featured_alt: Glass geometric forms beside a dark template with matching apertures
