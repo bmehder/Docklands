@@ -2,6 +2,7 @@
 title: "And Then Somebody Opened a File"
 description: "How programs can describe interactions with the outside world as values, while execution still performs the work."
 published: 2026-10-13
+publication_order: 2
 tags: Programming, Functional Programming, Side Effects
 featured_image: /assets/images/note-and-then-somebody-opened-a-file.webp
 featured_alt: Glass components connected through a transparent panel to a stack of paper

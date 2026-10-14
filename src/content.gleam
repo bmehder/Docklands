@@ -7,7 +7,7 @@ import gleam/result
 import gleam/string
 import mork
 import yamleam
-import yamleam/node.{type YamlNode, YamlBool, YamlMap, YamlString}
+import yamleam/node.{type YamlNode, YamlBool, YamlInt, YamlMap, YamlString}
 
 pub type Metadata {
   Metadata(values: Dict(String, YamlNode))
@@ -101,6 +101,19 @@ pub fn metadata_string(metadata: Metadata, key: String) -> Result(String, Nil) {
   case dict.get(values, key) {
     Ok(YamlString(value)) -> Ok(value)
     _ -> Error(Nil)
+  }
+}
+
+pub fn publication_order(metadata: Metadata) -> Int {
+  let Metadata(values:) = metadata
+  case dict.get(values, "publication_order") {
+    Ok(YamlInt(value)) -> value
+    Ok(YamlString(value)) ->
+      case int.parse(value) {
+        Ok(order) -> order
+        Error(_) -> 0
+      }
+    _ -> 0
   }
 }
 

@@ -77,6 +77,18 @@ pub fn required_frontmatter_validation_test() {
 pub fn generated_site_test() {
   docklands.main()
 
+  let notes = read_generated_file("dist/notes/index.html")
+  let assert Ok(#(_, after_third)) =
+    string.split_once(notes, "href='/notes/solving-problems-with-values/'")
+  let assert Ok(#(_, after_second)) =
+    string.split_once(
+      after_third,
+      "href='/notes/and-then-somebody-opened-a-file/'",
+    )
+  assert string.contains(
+    after_second,
+    "href='/notes/what-is-a-program-really/'",
+  )
   let home_page = read_generated_file("dist/index.html")
   let guide_index = read_generated_file("dist/guides/index.html")
   let content_model =
@@ -165,4 +177,14 @@ pub fn generated_site_test() {
 fn read_generated_file(path: String) -> String {
   let assert Ok(contents) = simplifile.read(from: path)
   contents
+}
+
+pub fn publication_order_metadata_test() {
+  let base = "---\ntitle: Page\ndescription: Summary\npublished: 2026-10-13\n"
+  let assert Ok(Document(metadata: numbered, ..)) =
+    content.parse_document(base <> "publication_order: 3\n---\n")
+  let assert Ok(Document(metadata: missing, ..)) =
+    content.parse_document(base <> "---\n")
+  assert content.publication_order(numbered) == 3
+  assert content.publication_order(missing) == 0
 }

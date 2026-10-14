@@ -2,6 +2,7 @@
 title: "Solving Problems with Values"
 description: "Use types, messages, and pure transitions to solve a search-interface problem, with a small coordinator that handles effects."
 published: 2026-10-13
+publication_order: 3
 tags: Programming, Functional Programming, Types, Gleam
 featured_image: /assets/images/note-solving-problems-with-values.webp
 featured_alt: Four glass chambers linked by amber channels, with one glowing sphere marking the current state

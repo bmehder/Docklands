@@ -4,6 +4,7 @@ import content.{type Shortcode, Document, Shortcode}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/string
 import mork
 import simplifile
@@ -185,6 +186,7 @@ fn load_item(collection: Collection, source_filename: String) -> Item {
     title:,
     description:,
     published:,
+    publication_order: content.publication_order(metadata),
     tags:,
     featured_image:,
     indexable: collection_is_indexable && indexable,
@@ -196,7 +198,11 @@ fn newest_first(first_item: Item, second_item: Item) {
   let Item(published: first_date, ..) = first_item
   let Item(published: second_date, ..) = second_item
 
-  string.compare(second_date, first_date)
+  case string.compare(second_date, first_date) {
+    order.Eq ->
+      int.compare(second_item.publication_order, first_item.publication_order)
+    other -> other
+  }
 }
 
 pub fn collection_shortcodes(

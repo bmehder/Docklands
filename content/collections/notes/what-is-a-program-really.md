@@ -2,6 +2,7 @@
 title: "What Is a Program, Really?"
 description: "An investigation into values, functions, types, and composition—and the surprising idea that a pure program is itself a value."
 published: 2026-10-13
+publication_order: 1
 tags: Programming, Functional Programming, Types, Mathematics
 featured_image: /assets/images/note-what-is-a-program-really.webp
 featured_alt: Translucent teal and amber glass spheres and cubes joined into one geometric sculpture, with individual pieces nearby
