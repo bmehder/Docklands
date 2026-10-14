@@ -3,6 +3,7 @@ title: "And Then Somebody Opened a File"
 description: "How programs can describe interactions with the outside world as values, while execution still performs the work."
 published: 2026-10-13
 publication_order: 2
+series_label: "Programming with Values · Part 2 of 3"
 tags: Programming, Functional Programming, Side Effects
 featured_image: /assets/images/note-and-then-somebody-opened-a-file.webp
 featured_alt: Glass components connected through a transparent panel to a stack of paper
@@ -31,6 +32,11 @@ In [the previous article](https://docklands-ssg.vercel.app/notes/what-is-a-progr
 Then somebody opened a file.
 
 And now we have a problem.
+
+<nav class="series-nav" aria-label="Programming with Values series">
+<p class="series-heading">Programming with Values · Part 2 of 3</p>
+<ol><li><a href="https://docklands-ssg.vercel.app/notes/what-is-a-program-really/">What Is a Program, Really?</a></li><li><span aria-current="page">And Then Somebody Opened a File <small>— you’re here</small></span></li><li><a href="https://docklands-ssg.vercel.app/notes/solving-problems-with-values/">Solving Problems with Values</a></li></ol>
+</nav>
 
 ## The World Doesn't Take Arguments
 
@@ -622,4 +628,4 @@ And somehow, after everything we've introduced, we're right back where we starte
 
 Values.
 
-Continue with [Solving Problems with Values](https://docklands-ssg.vercel.app/notes/solving-problems-with-values/).
+<nav class="series-pagination" aria-label="Previous and next articles"><a rel="prev" href="https://docklands-ssg.vercel.app/notes/what-is-a-program-really/">← Previous: What Is a Program, Really?</a><a rel="next" href="https://docklands-ssg.vercel.app/notes/solving-problems-with-values/">Next: Solving Problems with Values →</a></nav>

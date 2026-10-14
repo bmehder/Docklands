@@ -89,6 +89,16 @@ pub fn generated_site_test() {
     after_second,
     "href='/notes/what-is-a-program-really/'",
   )
+  assert string.contains(notes, "Programming with Values · Part 3 of 3")
+  let second =
+    read_generated_file("dist/notes/and-then-somebody-opened-a-file/index.html")
+  assert string.contains(
+    second,
+    "aria-label=\"Programming with Values series\"",
+  )
+  assert string.contains(second, "aria-current=\"page\"")
+  assert string.contains(second, "rel=\"prev\"")
+  assert string.contains(second, "rel=\"next\"")
   let home_page = read_generated_file("dist/index.html")
   let guide_index = read_generated_file("dist/guides/index.html")
   let content_model =

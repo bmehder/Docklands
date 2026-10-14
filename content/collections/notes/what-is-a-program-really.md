@@ -3,6 +3,7 @@ title: "What Is a Program, Really?"
 description: "An investigation into values, functions, types, and composition—and the surprising idea that a pure program is itself a value."
 published: 2026-10-13
 publication_order: 1
+series_label: "Programming with Values · Part 1 of 3"
 tags: Programming, Functional Programming, Types, Mathematics
 featured_image: /assets/images/note-what-is-a-program-really.webp
 featured_alt: Translucent teal and amber glass spheres and cubes joined into one geometric sculpture, with individual pieces nearby
@@ -35,6 +36,11 @@ What if we stripped away the syntax, the language-specific abstractions, and the
 What would remain?
 
 Let's find out.
+
+<nav class="series-nav" aria-label="Programming with Values series">
+<p class="series-heading">Programming with Values · Part 1 of 3</p>
+<ol><li><span aria-current="page">What Is a Program, Really? <small>— you’re here</small></span></li><li><a href="https://docklands-ssg.vercel.app/notes/and-then-somebody-opened-a-file/">And Then Somebody Opened a File</a></li><li><a href="https://docklands-ssg.vercel.app/notes/solving-problems-with-values/">Solving Problems with Values</a></li></ol>
+</nav>
 
 ## First, We Need Something
 
@@ -1247,5 +1253,4 @@ Now we have to confront the one thing we've been ignoring.
 
 **What happens when our program actually does something?**
 
-Continue with [And Then Somebody Opened a File](https://docklands-ssg.vercel.app/notes/and-then-somebody-opened-a-file/).
-
+<nav class="series-pagination" aria-label="Previous and next articles"><a rel="next" href="https://docklands-ssg.vercel.app/notes/and-then-somebody-opened-a-file/">Next: And Then Somebody Opened a File →</a></nav>

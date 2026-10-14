@@ -187,6 +187,10 @@ fn load_item(collection: Collection, source_filename: String) -> Item {
     description:,
     published:,
     publication_order: content.publication_order(metadata),
+    series_label: case content.metadata_string(metadata, "series_label") {
+      Ok(label) -> Some(label)
+      Error(_) -> None
+    },
     tags:,
     featured_image:,
     indexable: collection_is_indexable && indexable,

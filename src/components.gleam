@@ -53,7 +53,7 @@ fn item_card(route: String, item_label: String, item: Item) -> String {
   "<article class='item-card group'>
       " <> image <> "
       <div class='item-card-copy'>
-        " <> published_date(published) <> "
+        " <> published_date(published) <> series_label(item) <> "
         <h2><a href='/" <> route <> "/" <> slug <> "/'>" <> site.escape_html(
     title,
   ) <> "</a></h2>
@@ -133,4 +133,12 @@ fn format_date(published: String) -> String {
   }
 
   int.to_string(day) <> " " <> month <> " " <> year
+}
+
+fn series_label(item: Item) -> String {
+  case item.series_label {
+    Some(label) ->
+      "<p class='series-label'>" <> site.escape_html(label) <> "</p>"
+    None -> ""
+  }
 }

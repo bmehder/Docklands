@@ -23,6 +23,7 @@ pub type Item {
     description: String,
     published: String,
     publication_order: Int,
+    series_label: Option(String),
     tags: List(String),
     featured_image: Option(FeaturedImage),
     indexable: Bool,

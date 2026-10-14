@@ -3,6 +3,7 @@ title: "Solving Problems with Values"
 description: "Use types, messages, and pure transitions to solve a search-interface problem, with a small coordinator that handles effects."
 published: 2026-10-13
 publication_order: 3
+series_label: "Programming with Values · Part 3 of 3"
 tags: Programming, Functional Programming, Types, Gleam
 featured_image: /assets/images/note-solving-problems-with-values.webp
 featured_alt: Four glass chambers linked by amber channels, with one glowing sphere marking the current state
@@ -25,6 +26,11 @@ That's a satisfying idea, but eventually we have to build something.
 Somebody wants a search box. They type a few words, press a button, and results appear.
 
 How difficult could that be?
+
+<nav class="series-nav" aria-label="Programming with Values series">
+<p class="series-heading">Programming with Values · Part 3 of 3</p>
+<ol><li><a href="https://docklands-ssg.vercel.app/notes/what-is-a-program-really/">What Is a Program, Really?</a></li><li><a href="https://docklands-ssg.vercel.app/notes/and-then-somebody-opened-a-file/">And Then Somebody Opened a File</a></li><li><span aria-current="page">Solving Problems with Values <small>— you’re here</small></span></li></ol>
+</nav>
 
 ## Apparently, Quite Difficult
 
@@ -699,3 +705,5 @@ And our most useful question turns out to be remarkably ordinary.
 Given what we know, and what just happened:
 
 **What should happen next?**
+
+<nav class="series-pagination" aria-label="Previous and next articles"><a rel="prev" href="https://docklands-ssg.vercel.app/notes/and-then-somebody-opened-a-file/">← Previous: And Then Somebody Opened a File</a></nav>
