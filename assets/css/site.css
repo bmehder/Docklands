@@ -29,7 +29,7 @@
   .page-content { @apply mx-auto max-w-6xl px-6 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24; }
   .page-content > div { @apply w-full; }
   .page-content h1 { @apply max-w-4xl text-5xl leading-[.98] font-semibold tracking-[-.05em] text-white sm:text-7xl lg:text-[5.2rem]; }
-  .page-content > div > p:not(.eyebrow) { @apply mt-7 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl; }
+  .page-content > div > p:not(.eyebrow) { @apply mt-5 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl; }
   .eyebrow { @apply mb-6 font-mono text-[11px] font-semibold tracking-[.18em] text-teal-300 uppercase; }
   .section-number { @apply font-mono text-[11px] tracking-[.16em] text-slate-500 uppercase; }
   .hero { @apply relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b171c] px-6 py-16 sm:px-12 sm:py-20 lg:px-16 lg:py-24; }
@@ -88,6 +88,8 @@
   .closing-panel > p:not(.eyebrow) { @apply mt-6 max-w-xl text-base leading-7 text-teal-950; }
   .primary-button.light { @apply mt-8 bg-[#071014] text-white hover:bg-[#102229]; }
   .page-content > div > h2 { @apply mt-16 max-w-3xl text-4xl leading-tight font-semibold tracking-[-.035em] text-white sm:text-5xl; }
+  .page-content > div > h3 { @apply mt-12 max-w-3xl text-2xl leading-tight font-semibold tracking-tight text-white sm:text-3xl; }
+  .page-content > div > :is(h4, h5, h6) { @apply mt-10 max-w-3xl text-xl leading-snug font-semibold text-white; }
   .page-content ul, .page-content ol { @apply mt-6 max-w-2xl space-y-3 pl-6 text-base leading-7 text-slate-400; }
   .page-content ul { @apply list-disc marker:text-teal-300; } .page-content ol { @apply list-decimal marker:text-amber-300; }
   .page-content :where(p, li, blockquote) a:not([class]) { @apply font-medium text-teal-200 underline decoration-teal-300/50 underline-offset-4 transition hover:text-white hover:decoration-teal-200 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300; }
@@ -115,16 +117,25 @@
   .item-meta { @apply mb-10 flex items-center justify-between gap-6; }
   .back-link { @apply text-sm font-semibold text-teal-300 hover:text-teal-200; }
   .item-content { @apply max-w-3xl; }
-  .item-content > p { @apply mt-8 max-w-3xl text-lg leading-8 text-slate-400; }
+  .item-content > p { @apply mt-5 max-w-3xl text-lg leading-8 text-slate-400; }
   .item-content .published-date { @apply mt-0; }
   .item-content > .tag-list { @apply mt-0 mb-10; }
   .item-content > h2 { @apply mt-16 text-3xl font-semibold tracking-tight text-white sm:text-4xl; }
+  .item-content > h3 { @apply mt-12 text-2xl leading-tight font-semibold tracking-tight text-white sm:text-3xl; }
+  .item-content > :is(h4, h5, h6) { @apply mt-10 text-xl leading-snug font-semibold text-white; }
   .item-content > ul, .item-content > ol { @apply text-lg leading-8; }
   .item-content code { @apply rounded bg-white/5 px-1.5 py-1 font-mono text-[.9em] text-teal-200; }
   .item-content pre { @apply mt-8 overflow-x-auto rounded-2xl border border-white/10 bg-[#020608] p-6; }
   .item-content pre code { @apply bg-transparent p-0 text-slate-300; }
   .item-content blockquote { @apply mt-8 border-l-2 border-amber-300/50 pl-6; }
   .item-content blockquote p { @apply text-lg leading-8 text-slate-300; }
+  .item-content blockquote p + p { @apply mt-5; }
+  .article-table { @apply mt-8 overflow-x-auto rounded-2xl border border-white/10; }
+  .article-table table { @apply w-full text-left text-base leading-7 text-slate-400; }
+  .article-table :is(th, td) { @apply px-4 py-3 align-top sm:px-5; }
+  .article-table th { @apply bg-white/5 font-semibold text-slate-200; }
+  .article-table tbody, .article-table tr + tr { @apply border-t border-white/10; }
+  .article-table td:first-child { @apply font-medium text-slate-200; }
   .featured-image { @apply mt-12 mb-16 max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-[#0b171c]; }
   .featured-image img { @apply aspect-[16/9] w-full object-cover; }
   .tag-heading { @apply mb-16; }
