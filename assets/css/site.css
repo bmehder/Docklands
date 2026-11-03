@@ -130,6 +130,8 @@
   .item-content blockquote { @apply mt-8 border-l-2 border-amber-300/50 pl-6; }
   .item-content blockquote p { @apply text-lg leading-8 text-slate-300; }
   .item-content blockquote p + p { @apply mt-5; }
+  .syntax-weight { @apply mt-8; }
+  .syntax-weight img { @apply block h-auto w-full; }
   .article-table { @apply mt-8 overflow-x-auto rounded-2xl border border-white/10; }
   .article-table table { @apply w-full text-left text-base leading-7 text-slate-400; }
   .article-table :is(th, td) { @apply px-4 py-3 align-top sm:px-5; }

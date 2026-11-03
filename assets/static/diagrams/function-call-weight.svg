@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="424" viewBox="0 0 800 424" role="img" aria-labelledby="title desc">
+  <title id="title">Nesting adds visual weight to the right</title>
+  <desc id="desc">Three calls align at the boundary between the function name and its opening parenthesis. Parse takes input. Validate takes parse of input. Transform takes validate of parse of input. The highlighted argument expression grows to the right as calls are nested.</desc>
+  <rect x="1" y="1" width="798" height="422" rx="20" fill="#0b171c" stroke="#253237"/>
+  <g font-family="Avenir Next, Avenir, Segoe UI, sans-serif">
+    <text x="36" y="46" fill="#e2e8f0" font-size="23" font-weight="600">Nesting adds weight to the right</text>
+    <text x="230" y="90" text-anchor="end" fill="#94a3b8" font-size="15">Function name</text>
+    <text x="253" y="90" fill="#e6b875" font-size="15">Argument expression</text>
+  </g>
+  <path d="M242 105V345" stroke="#64748b" stroke-width="1" stroke-dasharray="4 6"/>
+  <g fill="#fbbf24" fill-opacity="0.07" stroke="#fbbf24" stroke-opacity="0.25">
+    <rect x="243" y="117" width="124" height="54" rx="8"/>
+    <rect x="243" y="199" width="234" height="54" rx="8"/>
+    <rect x="243" y="281" width="406" height="54" rx="8"/>
+  </g>
+  <g font-family="SFMono-Regular, Consolas, Liberation Mono, monospace" font-size="26" xml:space="preserve">
+    <text x="242" y="152" text-anchor="end" fill="#5eead4">parse</text><text x="242" y="152" fill="#f2ce8d">(input)</text>
+    <text x="242" y="234" text-anchor="end" fill="#5eead4">validate</text><text x="242" y="234" fill="#f2ce8d">(parse(input))</text>
+    <text x="242" y="316" text-anchor="end" fill="#5eead4">transform</text><text x="242" y="316" fill="#f2ce8d">(validate(parse(input)))</text>
+  </g>
+  <g font-family="Avenir Next, Avenir, Segoe UI, sans-serif" fill="#94a3b8" font-size="17">
+    <text x="36" y="382">The name stays on the left. Its argument can contain the rest of the expression.</text>
+  </g>
+</svg>

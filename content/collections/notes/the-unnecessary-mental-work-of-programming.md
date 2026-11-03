@@ -121,17 +121,19 @@ Consider:
 const result = transform(validate(parse(input)))
 ```
 
-The conceptual sequence is:
+The conceptual sequence—the order in which the data is transformed—is:
 
 ```text
 input → parse → validate → transform
 ```
 
-The order in which the data is transformed.
+But the source code makes us read inward before working outward.
 
-But the source code makes you read inward before working outward.
+The function names and their arguments are also arranged asymmetrically. The function name sits on the left, while its arguments extend to the right. As calls are nested, those arguments contain more expressions, and the visual weight becomes heavier on that side. We have to mentally compensate when reading it—almost as though we need to tilt our heads to the left to balance the code.
 
-And the function names and their arguments are arranged asymmetrically.
+<figure class="syntax-weight"><img src="/assets/diagrams/function-call-weight.svg" alt="Three function calls align at their opening parentheses; the argument expression grows to the right as calls are nested." width="800" height="424" loading="lazy"></figure>
+
+The parentheses match. The question is whether the notation gives us a useful visual balance: structural symmetry, or visual correspondence.
 
 Compare this with HTML:
 
@@ -143,23 +145,21 @@ Compare this with HTML:
 </article>
 ```
 
-HTML is still nested, but it gives you explicit opening and closing boundaries. The closing tags even repeat the names of the structures they terminate.
+HTML is still nested, but it gives us explicit opening and closing boundaries. The closing tags even repeat the names of the structures they terminate, whereas ordinary function calls use an anonymous `)`.
 
-There's an important qualification: function-call parentheses are technically balanced too. The distinction is probably better called structural symmetry or visual correspondence.
+A question worth exploring is whether structural symmetry is independently valuable, or whether its apparent benefits are explained by explicit boundaries, locality, and reduced working-memory demands.
 
-The distinction matters because HTML makes the relationship between opening and closing structures explicit, whereas ordinary function calls use an anonymous `)`.
+### A hierarchy of expressions, a sequence of operations
+
+There is another difference between the two examples. In the markup, the paragraph belongs to the section, and the section belongs to the article. The nesting expresses containment.
+
+In `transform(validate(parse(input)))`, the inner calls are syntactically subexpressions of the outer call. But that doesn't make parsing conceptually a subdivision of validation, or validation a subdivision of transformation. Here, they are stages in a sequence: one operation produces the input for the next.
+
+The syntax presents that sequence as a hierarchy of expressions. We have to recover the sequence from the hierarchy.
 
 ### Pipes: Someone articulated almost exactly this argument
 
-One particularly striking source is [SRFI 197: Pipeline Operators](https://srfi.schemers.org/srfi-197/srfi-197.html), a Scheme language proposal finalized in 2020.
-
-Its rationale explicitly identifies deeply nested expressions, excessive indentation, and parenthesis-matching errors as problems that pipeline operators address.
-
-It also notes that expressing operations in their natural sequence can make them easier to read.
-
-This is a very direct precedent for the argument here.
-
-Consider Gleam:
+A pipe makes that sequence visible directly. In Gleam:
 
 ```gleam
 input
@@ -176,13 +176,9 @@ Second, the written order matches the conceptual order. We read the program in t
 
 This is arguably more important than merely reducing parentheses.
 
-A pipe doesn't eliminate functional composition; it changes how composition is presented.
+One particularly striking source is [SRFI 197: Pipeline Operators](https://srfi.schemers.org/srfi-197/srfi-197.html), a Scheme language proposal finalized in 2020. Its rationale explicitly identifies deeply nested expressions, excessive indentation, and parenthesis-matching errors as problems that pipeline operators address. It also notes that expressing operations in their natural sequence can make them easier to read.
 
-And that distinction is central to the argument.
-
-A question worth exploring is whether structural symmetry is independently valuable, or whether its apparent benefits are actually explained by more established properties such as explicit boundaries, locality, and reduced working-memory demands.
-
-That takes the observation beyond a preference for functional programming syntax and turns it into a more general hypothesis about how humans read programs.
+A pipe doesn't eliminate functional composition; it changes how composition is presented. The operations remain the same, but the notation does more of the work of showing how they fit together.
 
 ## The Treasure Hunt
 
