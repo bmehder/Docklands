@@ -3,9 +3,13 @@ title: "What if the code showed the shape of the problem?"
 description: "Introducing M: a functional language design exploring how pipelines, tuples, pattern matching, and effects can reveal the structure of a computation."
 published: 2026-11-03
 tags: Programming, Software Design, Readability, Functional Programming, Types
+featured_image: /assets/images/note-shape-of-the-problem.webp
+featured_alt: An amber light path branches through teal glass forms and rejoins into a clear computational structure
 ---
 
 # What if the code showed the shape of the problem?
+
+{{ featured-image }}
 
 *Introducing M, an experiment in functional language design.*
 
