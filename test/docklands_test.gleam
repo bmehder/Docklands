@@ -124,6 +124,14 @@ pub fn generated_site_test() {
   )
   assert string.contains(home_page, "id='features'")
   assert string.contains(home_page, "href='/guides/collections/'")
+  assert string.contains(
+    home_page,
+    "target='_blank' rel='noopener noreferrer' href='https://github.com/bmehder/Docklands'",
+  )
+  assert !string.contains(
+    home_page,
+    "target='_blank' rel='noopener noreferrer' href='/guides/collections/'",
+  )
   assert string.contains(home_page, "Metadata without repetition")
   assert string.contains(home_page, "Portable content, clean URLs")
 

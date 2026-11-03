@@ -22,6 +22,7 @@ pub fn page(metadata: Metadata, content: String) -> String {
   let description = escape_html(description)
   let canonical_url = escape_html(absolute_url(path))
   let image_url = escape_html(absolute_url(image))
+  let content = external_links_open_in_new_tab(content)
   let robots = case indexable {
     True -> ""
     False -> "\n    <meta name='robots' content='noindex'>"
@@ -61,6 +62,18 @@ pub fn page(metadata: Metadata, content: String) -> String {
   </body>
 </html>
 "
+}
+
+fn external_links_open_in_new_tab(content: String) -> String {
+  content
+  |> string.replace(
+    " href='http",
+    " target='_blank' rel='noopener noreferrer' href='http",
+  )
+  |> string.replace(
+    " href=\"http",
+    " target=\"_blank\" rel=\"noopener noreferrer\" href=\"http",
+  )
 }
 
 pub fn absolute_url(reference: String) -> String {
