@@ -1,0 +1,8 @@
+<svg width="760" height="180" viewBox="0 0 760 180" role="img" aria-labelledby="application-title" xmlns="http://www.w3.org/2000/svg">
+<rect width="760" height="180" rx="12" fill="#101720"/>
+<title id="application-title">JavaScript f(x), M f x, and M x pipe f all describe applying a function to a value.</title>
+<g fill="#1c2938" stroke="#52677d"><rect x="20" y="20" width="220" height="68" rx="12"/><rect x="270" y="20" width="220" height="68" rx="12"/><rect x="520" y="20" width="220" height="68" rx="12"/></g>
+<g fill="#dce8f5" text-anchor="middle" font-family="ui-monospace, monospace" font-size="25"><text x="130" y="63">f(x)</text><text x="380" y="63">f x</text><text x="630" y="63">x |&gt; f</text></g>
+<g fill="#a6b8cc" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14"><text x="130" y="112">JavaScript application</text><text x="380" y="112">M application</text><text x="630" y="112">M forward application</text></g>
+<text x="380" y="158" fill="#7dd4c8" text-anchor="middle" font-family="system-ui, sans-serif" font-size="17">Same relationship: give x to f.</text>
+</svg>

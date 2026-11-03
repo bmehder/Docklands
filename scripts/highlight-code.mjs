@@ -1,6 +1,12 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { codeToHtml } from 'shiki'
+import { codeToHtml, createHighlighter } from 'shiki'
+import { mLanguage } from './m-language.mjs'
+
+const mHighlighter = await createHighlighter({
+  themes: ['github-dark-default'],
+  langs: [mLanguage],
+})
 
 const outputDirectory = 'dist'
 const codeBlockPattern =
@@ -54,7 +60,8 @@ async function highlightCodeBlocks(html) {
     highlightedHtml += html.slice(previousMatchEnd, matchStart)
 
     try {
-      highlightedHtml += await codeToHtml(decodeHtml(escapedCode), {
+      const render = language === 'm' ? mHighlighter.codeToHtml : codeToHtml
+      highlightedHtml += await render(decodeHtml(escapedCode), {
         lang: language,
         theme: 'github-dark-default',
       })

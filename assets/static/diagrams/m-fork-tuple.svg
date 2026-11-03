@@ -1,0 +1,11 @@
+<svg width="760" height="260" viewBox="0 0 760 260" role="img" aria-labelledby="fork-title" xmlns="http://www.w3.org/2000/svg">
+<rect width="760" height="260" rx="12" fill="#101720"/>
+<title id="fork-title">The list goes to sum and List.length. Their results, 20 and 4, form a tuple passed to divide, producing Ok 5.</title>
+<defs><marker id="fork-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7dd4c8"/></marker></defs>
+<g fill="none" stroke="#7dd4c8" stroke-width="2" marker-end="url(#fork-arrow)"><path d="M180 120 L205 120 L205 57 L235 57"/><path d="M180 120 L205 120 L205 183 L235 183"/><path d="M380 57 L414 57 L414 102 L450 102"/><path d="M380 183 L414 183 L414 138 L450 138"/><path d="M565 120 L595 120"/><path d="M695 120 L728 120"/></g>
+<g fill="#1c2938" stroke="#52677d"><rect x="10" y="90" width="170" height="60" rx="10"/><rect x="235" y="27" width="145" height="60" rx="10"/><rect x="235" y="153" width="145" height="60" rx="10"/><rect x="450" y="90" width="115" height="60" rx="10"/><rect x="595" y="90" width="100" height="60" rx="10"/></g>
+<g fill="#dce8f5" font-family="ui-monospace, monospace" text-anchor="middle" font-size="17"><text x="95" y="126">[2, 4, 6, 8]</text><text x="307" y="63">sum</text><text x="307" y="189">List.length</text><text x="507" y="126">(20, 4)</text><text x="645" y="126">divide</text></g>
+<g fill="#edbd82" font-family="ui-monospace, monospace" font-size="15"><text x="388" y="44">20</text><text x="390" y="208">4</text></g>
+<text x="730" y="164" text-anchor="end" fill="#9bd6a4" font-family="ui-monospace, monospace" font-size="18">Ok 5</text>
+<text x="380" y="248" text-anchor="middle" fill="#a6b8cc" font-family="system-ui, sans-serif" font-size="15">One input → independent branches → a tuple → the next function</text>
+</svg>
