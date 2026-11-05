@@ -1,6 +1,17 @@
 name = "docklands"
 version = "2.0.1"
 target = "erlang"
+gleam = ">= 1.18.1"
+internal_modules = ["docklands", "layout", "output"]
+links = [
+  { title = "Docklands", href = "https://docklands-ssg.vercel.app" },
+  { title = "Guides", href = "https://docklands-ssg.vercel.app/guides/" },
+]
+
+[repository]
+type = "github"
+user = "bmehder"
+repo = "Docklands"
 
 [dependencies]
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"

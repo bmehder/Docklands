@@ -1,3 +1,8 @@
+//// Parses Markdown documents and validates Docklands frontmatter.
+////
+//// Parsing returns typed values and explicit errors before Markdown rendering
+//// begins, keeping content conventions separate from page generation.
+
 import collections.{type FeaturedImage, FeaturedImage}
 import gleam/dict.{type Dict}
 import gleam/int
@@ -11,10 +16,12 @@ import yamleam/node.{type YamlNode, YamlBool, YamlInt, YamlMap, YamlString}
 
 // Document and frontmatter types
 
+/// The YAML mapping attached to a Markdown document.
 pub type Frontmatter {
   Frontmatter(values: Dict(String, YamlNode))
 }
 
+/// The validated common fields and Markdown body of a source document.
 pub type Document {
   Document(
     title: String,
@@ -26,6 +33,7 @@ pub type Document {
   )
 }
 
+/// A frontmatter or document-contract error that prevents generation.
 pub type ParseError {
   InvalidYaml(yamleam.YamlError)
   FrontmatterMustBeMapping
@@ -43,6 +51,7 @@ pub type ParseError {
 
 // Required frontmatter and document parsing
 
+/// Parses a complete Markdown source file and validates its required fields.
 pub fn parse_document(source: String) -> Result(Document, ParseError) {
   let #(frontmatter, markdown) = mork.split_frontmatter_from_input(source)
 
@@ -93,6 +102,7 @@ fn required_string(
 
 // Optional collection frontmatter
 
+/// Reads the paired `featured_image` and `featured_alt` optional fields.
 pub fn parse_featured_image(
   frontmatter: Frontmatter,
 ) -> Result(Option(FeaturedImage), ParseError) {
@@ -107,6 +117,7 @@ pub fn parse_featured_image(
   }
 }
 
+/// Reads a non-empty optional string from frontmatter.
 pub fn optional_string(
   frontmatter: Frontmatter,
   key: String,
@@ -124,6 +135,7 @@ pub fn optional_string(
   }
 }
 
+/// Reads `publication_order`, defaulting to zero when it is absent.
 pub fn publication_order(frontmatter: Frontmatter) -> Result(Int, ParseError) {
   let Frontmatter(values:) = frontmatter
 
@@ -139,6 +151,7 @@ pub fn publication_order(frontmatter: Frontmatter) -> Result(Int, ParseError) {
   }
 }
 
+/// Reads a comma-separated optional field as a normalized list of strings.
 pub fn frontmatter_list(
   frontmatter: Frontmatter,
   key: String,

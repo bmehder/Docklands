@@ -67,6 +67,8 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │       └── notes/index.md
 ├── scripts/
 │   ├── check-highlighted-code.mjs # Post-build highlighting regression check
+│   ├── check-reference-docs.mjs    # Generated-reference regression check
+│   ├── copy-docs.mjs               # Publishes Gleam docs beneath dist/reference
 │   ├── highlight-code.mjs         # Build-time Shiki transformation
 │   └── optimize-images.mjs        # Raster and favicon processing
 ├── src/
@@ -105,11 +107,17 @@ The configuration file describes choices; `layout.gleam` renders the document sh
 `npm run build` has two explicit phases:
 
 1. `build:pages` runs Gleam. It discovers routes and collection items, parses YAML frontmatter with Yamleam and Markdown with Mörk, applies the shared layout, generates tag archives, `sitemap.xml`, and `robots.txt`, and copies assets that require no processing. Raster sources beneath `assets/static/images/` are deliberately excluded from that copy.
-2. `build:postprocess` runs the npm-based transformations. Shiki adds build-time syntax highlighting, Sharp produces deployable WebP images and favicon files, Lustre and esbuild bundle the isolated widget, and Tailwind writes the minified stylesheet.
+2. `build:postprocess` runs the remaining transformations. Shiki adds build-time syntax highlighting, Sharp produces deployable WebP images and favicon files, Lustre and esbuild bundle the isolated widget, Tailwind writes the minified stylesheet, and Gleam generates searchable API reference documentation beneath `dist/reference/`.
 
 Each postprocess tool owns the files it adds to `dist/`. In particular, Sharp is the only producer of raster files beneath `dist/assets/images/`, so the original PNG, JPEG, AVIF, TIFF, or WebP sources are not deployed alongside their optimized output.
 
 The final `dist/` directory can be served by any static host.
+
+## Guides and reference documentation
+
+The [guides](https://docklands-ssg.vercel.app/guides/) explain how to accomplish common website tasks. The generated [Gleam reference](https://docklands-ssg.vercel.app/reference/) documents the supported SSG modules, types, and functions directly from `////` and `///` comments in the source.
+
+Run `npm run build:docs` to regenerate only the reference. Modules that implement this particular demo site's executable, layout, and low-level output details are marked internal in `gleam.toml`, so they do not appear as supported SSG API.
 
 ## Routes and frontmatter
 
@@ -191,4 +199,4 @@ Docklands currently has no client-side navigation, site-wide state, site-wide hy
 
 ## Releases
 
-See [CHANGELOG.md](CHANGELOG.md) for notable changes and the release policy. Docklands versions independently from the Markdown content contract; a customized site should record both the Docklands release and the exact upstream commit it incorporated.
+See the [changelog](https://github.com/bmehder/Docklands/blob/main/CHANGELOG.md) for notable changes and the release policy. Docklands versions independently from the Markdown content contract; a customized site should record both the Docklands release and the exact upstream commit it incorporated.

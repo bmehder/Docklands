@@ -10,6 +10,7 @@ Notable Docklands changes are recorded here.
 - Reorganized the build into Gleam page generation and npm postprocessing phases.
 - Stopped copying raster source images into `dist/`; only optimized WebP output is deployed beneath `dist/assets/images/`.
 - Updated the README and on-site guides to match the current project structure and build pipeline.
+- Added generated Gleam API reference documentation at `/reference/`, with site-specific implementation modules excluded from the public SSG surface.
 
 ## 2.0.1 — 2026-10-07
 

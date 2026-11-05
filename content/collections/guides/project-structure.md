@@ -26,10 +26,12 @@ Most website changes begin in one of three places:
 The remaining working directories explain how Docklands turns those inputs into a website:
 
 - `src/` contains the small Gleam build pipeline. `config.gleam` is the central place for site identity, navigation, enabled site-wide features, and collection configuration. `docklands.gleam` orchestrates the build, `content.gleam` parses frontmatter, `shortcodes.gleam` expands explicit Markdown markers, and `generator.gleam` writes routes, collection items, tags, the sitemap, and robots file. `collections.gleam` owns collection item types and rendering, `layout.gleam` owns the shared page structure, and `output.gleam` contains the small URL and escaping helpers used while generating files.
-- `scripts/` contains supporting build steps that do not belong in the generator.
+- `scripts/` contains supporting build steps that do not belong in the generator, including publishing and checking the generated Gleam reference.
 - `test/` verifies the generated output and important URL behaviour.
 
 The generated `dist/` directory is output, not source. Delete it, rebuild it, or deploy it, but do not edit it by hand—the next build replaces it.
+
+The modules, types, and functions that form the supported SSG surface use Gleam documentation comments. Each complete build publishes their generated, searchable reference beneath `dist/reference/`; site-specific implementation modules are marked internal in `gleam.toml` and stay out of that reference.
 
 ## Follow ownership, not file extensions
 

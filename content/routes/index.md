@@ -102,7 +102,8 @@ published: 2026-09-30
 <b>02</b> Passthrough assets copied
 <b>03</b> Code and images postprocessed
 <b>04</b> Widget and Tailwind bundled
-<b>05</b> Deployable files ready in dist/
+<b>05</b> Gleam reference generated
+<b>06</b> Deployable files ready in dist/
 
 <strong>✓ Build complete</strong></code></pre>
   </div>

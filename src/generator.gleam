@@ -1,3 +1,10 @@
+//// This module turns the site's source content into its static HTML output.
+////
+//// It loads routes and configured collections, renders their pages, builds tag
+//// archives, and writes the sitemap and robots file. The entry-point module
+//// decides when these operations run; this module contains the rules for how
+//// source paths and parsed documents become files and URLs in `dist/`.
+
 import collections.{type Item, FeaturedImage, Item}
 import config.{type Collection, Collection}
 import content.{Document}
@@ -14,6 +21,7 @@ import simplifile
 
 const routes_directory = "content/routes"
 
+/// A collection configuration paired with all of its parsed items.
 pub type LoadedCollection {
   LoadedCollection(collection: Collection, items: List(Item))
 }
@@ -24,6 +32,7 @@ type TaggedItem {
 
 // Counts used by the build summary
 
+/// Counts items across every loaded collection.
 pub fn item_count(loaded_collections: List(LoadedCollection)) -> Int {
   loaded_collections
   |> list.fold(0, fn(total, loaded_collection) {
@@ -32,6 +41,7 @@ pub fn item_count(loaded_collections: List(LoadedCollection)) -> Int {
   })
 }
 
+/// Counts the unique tags belonging to indexable collection items.
 pub fn tag_count(loaded_collections: List(LoadedCollection)) -> Int {
   loaded_collections
   |> indexable_tagged_items
@@ -41,6 +51,7 @@ pub fn tag_count(loaded_collections: List(LoadedCollection)) -> Int {
 
 // Routes
 
+/// Discovers standalone Markdown route files in deterministic path order.
 pub fn load_routes() -> List(String) {
   let assert Ok(files) = simplifile.get_files(in: routes_directory)
 
@@ -49,6 +60,7 @@ pub fn load_routes() -> List(String) {
   |> list.sort(string.compare)
 }
 
+/// Generates standalone route pages from their Markdown source files.
 pub fn build_routes(
   route_sources: List(String),
   shortcodes: List(Shortcode),
@@ -142,6 +154,7 @@ fn output_directory(output_path: String) -> String {
 
 // Collections
 
+/// Loads and parses every configured collection.
 pub fn load_collections(
   configured_collections: List(Collection),
 ) -> List(LoadedCollection) {
@@ -211,6 +224,7 @@ fn newest_first(first_item: Item, second_item: Item) {
   }
 }
 
+/// Creates the shortcodes that render configured collection indexes.
 pub fn collection_shortcodes(
   loaded_collections: List(LoadedCollection),
 ) -> List(Shortcode) {
@@ -229,6 +243,7 @@ fn collection_shortcode(loaded_collection: LoadedCollection) -> Shortcode {
   )
 }
 
+/// Generates an index and an item page for every loaded collection.
 pub fn build_collections(
   loaded_collections: List(LoadedCollection),
   shortcodes: List(Shortcode),
@@ -306,6 +321,7 @@ fn build_item(
 
 // Tags
 
+/// Generates the tag index and cross-collection tag archive pages.
 pub fn build_tags(loaded_collections: List(LoadedCollection)) -> Nil {
   let tagged_items = indexable_tagged_items(loaded_collections)
   let tags = tag_names(tagged_items)
@@ -441,6 +457,7 @@ fn tag_names(tagged_items: List(TaggedItem)) -> List(String) {
 
 // Sitemap and robots
 
+/// Writes the sitemap and robots file from indexable routes and items.
 pub fn write_sitemap_and_robots(
   route_sources: List(String),
   loaded_collections: List(LoadedCollection),

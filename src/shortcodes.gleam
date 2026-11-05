@@ -1,6 +1,12 @@
+//// Expands named, line-oriented markers before Markdown is rendered.
+////
+//// Shortcodes deliberately remain a small replacement mechanism rather than
+//// becoming a general template language.
+
 import gleam/list
 import gleam/string
 
+/// Associates a standalone Markdown marker with a reusable HTML fragment.
 pub type Shortcode {
   Shortcode(marker: String, html: String)
 }

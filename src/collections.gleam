@@ -1,3 +1,9 @@
+//// Defines collection items and renders their reusable HTML fragments.
+////
+//// Collection loading and page generation live in `generator`; this module
+//// owns the data passed between those steps and the presentation shared by
+//// collection indexes, tag archives, and individual item pages.
+
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -7,10 +13,12 @@ import output
 
 // Content types
 
+/// An item's optional image and the alternative text required with it.
 pub type FeaturedImage {
   FeaturedImage(src: String, alt: String)
 }
 
+/// Parsed content and metadata for one item in a configured collection.
 pub type Item {
   Item(
     slug: String,
@@ -28,6 +36,7 @@ pub type Item {
 
 // Tags
 
+/// Converts an author-written tag into its URL-safe archive path segment.
 pub fn tag_slug(tag: String) -> String {
   tag
   |> string.trim
@@ -36,6 +45,7 @@ pub fn tag_slug(tag: String) -> String {
   |> uri.percent_encode
 }
 
+/// Renders the linked tags displayed on collection cards and item pages.
 pub fn tag_list(tags: List(String)) -> String {
   case tags {
     [] -> ""
@@ -58,6 +68,7 @@ pub fn tag_list(tags: List(String)) -> String {
 
 // Collection listings
 
+/// Renders a collection's items as a list of cards.
 pub fn collection_list(
   route: String,
   item_label: String,
@@ -71,6 +82,7 @@ pub fn collection_list(
   "<div class='collection-list'>" <> cards <> "</div>"
 }
 
+/// Renders cards from multiple collections for a tag archive.
 pub fn tagged_item_list(items: List(#(String, String, Item))) -> String {
   let cards =
     items
@@ -127,6 +139,7 @@ fn series_label(card_item: Item) -> String {
 
 // Item pages
 
+/// Renders the collection backlink and publication date above an item.
 pub fn item_meta(
   route: String,
   item_label: String,
@@ -138,6 +151,7 @@ pub fn item_meta(
   </div>"
 }
 
+/// Renders an item's featured image, or an empty string when it has none.
 pub fn featured_image(item: Item) -> String {
   let Item(featured_image:, ..) = item
 

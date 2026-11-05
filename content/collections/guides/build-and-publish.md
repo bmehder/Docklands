@@ -11,7 +11,7 @@ featured_alt: Three connected build stages ending in an amber deployment node
 
 {{ featured-image }}
 
-Docklands has one complete build command with two visible phases. Gleam first generates the pages and passthrough assets. The npm postprocess phase then highlights code, optimizes images, bundles the optional widget, and compiles the stylesheet.
+Docklands has one complete build command with two visible phases. Gleam first generates the pages and passthrough assets. The postprocess phase then highlights code, optimizes images, bundles the optional widget, compiles the stylesheet, and generates the Gleam reference documentation.
 
 ## Build the site
 
@@ -21,6 +21,8 @@ npm run build
 ```
 
 The resulting `dist/` directory is the whole deployable website. `build:pages` can be run independently while working on generation code, but only the complete `npm run build` command produces the finished site.
+
+The generated SSG reference is available at `/reference/`. It complements the task-oriented guides with searchable documentation derived directly from the public Gleam modules, types, functions, and their documentation comments.
 
 ## Preview it locally
 
