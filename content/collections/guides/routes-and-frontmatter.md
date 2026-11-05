@@ -33,6 +33,8 @@ The shared layout uses the title and description for document and social metadat
 
 These three non-empty, top-level fields form Docklands' portable content baseline. Quoted and plain YAML strings are both decoded normally. You may add project-specific scalar, list, or mapping fields without confusing the core-field reader; unknown metadata is ignored.
 
+Recognized optional fields are validated rather than silently discarded. For example, `noindex` must be a Boolean, `publication_order` must be an integer, and image metadata must provide both `featured_image` and `featured_alt`.
+
 ## Keep a page out of search
 
 Add `noindex: true` when a page should exist publicly but should not appear in search engines or the sitemap. Docklands always applies this treatment to the generated 404 page.

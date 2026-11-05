@@ -4,7 +4,12 @@ Notable Docklands changes are recorded here.
 
 ## Unreleased
 
-No changes yet.
+- Centralized site identity, navigation, optional GitHub and back-to-top features, and collection definitions in `config.gleam`.
+- Split layout, content parsing, shortcode expansion, generated-output helpers, and collection rendering into focused modules with clearer types and validation.
+- Added regression coverage for optional frontmatter and shortcode behavior.
+- Reorganized the build into Gleam page generation and npm postprocessing phases.
+- Stopped copying raster source images into `dist/`; only optimized WebP output is deployed beneath `dist/assets/images/`.
+- Updated the README and on-site guides to match the current project structure and build pipeline.
 
 ## 2.0.1 — 2026-10-07
 

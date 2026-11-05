@@ -1,21 +1,24 @@
 import content.{
-  Document, EmptyRequiredField, InvalidPublishedDate, MissingRequiredField,
-  RequiredFieldMustBeString,
+  Document, EmptyRequiredField, FeaturedAltRequiresImage,
+  FeaturedImageRequiresAlt, InvalidPublishedDate, MissingRequiredField,
+  OptionalFieldMustBeBoolean, OptionalFieldMustBeInteger,
+  OptionalFieldMustBeString, RequiredFieldMustBeString,
 }
 import docklands
 import gleam/string
 import gleeunit
+import output
+import shortcodes.{Shortcode}
 import simplifile
-import site
 
 pub fn main() -> Nil {
   gleeunit.main()
 }
 
 pub fn absolute_url_test() {
-  assert site.absolute_url("/guides/content-model/")
+  assert output.absolute_url("/guides/content-model/")
     == "https://docklands-ssg.vercel.app/guides/content-model/"
-  assert site.absolute_url("https://cdn.example.com/image.webp")
+  assert output.absolute_url("https://cdn.example.com/image.webp")
     == "https://cdn.example.com/image.webp"
 }
 
@@ -126,11 +129,11 @@ pub fn generated_site_test() {
   assert string.contains(home_page, "href='/guides/collections/'")
   assert string.contains(
     home_page,
-    "target='_blank' rel='noopener noreferrer' href='https://github.com/bmehder/Docklands'",
+    "<a class='text-link' href='https://github.com/bmehder/Docklands'>View source</a>",
   )
-  assert !string.contains(
+  assert string.contains(
     home_page,
-    "target='_blank' rel='noopener noreferrer' href='/guides/collections/'",
+    "<a class='github-link' href='https://github.com/bmehder/Docklands' target='_blank' rel='noreferrer'",
   )
   assert string.contains(home_page, "Metadata without repetition")
   assert string.contains(home_page, "Portable content, clean URLs")
@@ -197,12 +200,48 @@ fn read_generated_file(path: String) -> String {
   contents
 }
 
-pub fn publication_order_metadata_test() {
+pub fn publication_order_frontmatter_test() {
   let base = "---\ntitle: Page\ndescription: Summary\npublished: 2026-10-13\n"
-  let assert Ok(Document(metadata: numbered, ..)) =
+  let assert Ok(Document(frontmatter: numbered, ..)) =
     content.parse_document(base <> "publication_order: 3\n---\n")
-  let assert Ok(Document(metadata: missing, ..)) =
+  let assert Ok(Document(frontmatter: missing, ..)) =
     content.parse_document(base <> "---\n")
-  assert content.publication_order(numbered) == 3
-  assert content.publication_order(missing) == 0
+  assert content.publication_order(numbered) == Ok(3)
+  assert content.publication_order(missing) == Ok(0)
+}
+
+pub fn optional_frontmatter_validation_test() {
+  let base = "---\ntitle: Page\ndescription: Summary\npublished: 2026-10-13\n"
+
+  let assert Ok(Document(frontmatter: missing_alt, ..)) =
+    content.parse_document(base <> "featured_image: /image.webp\n---\n")
+  let assert Error(FeaturedImageRequiresAlt) =
+    content.parse_featured_image(missing_alt)
+
+  let assert Ok(Document(frontmatter: missing_image, ..)) =
+    content.parse_document(base <> "featured_alt: A useful image\n---\n")
+  let assert Error(FeaturedAltRequiresImage) =
+    content.parse_featured_image(missing_image)
+
+  let assert Ok(Document(frontmatter: invalid_order, ..)) =
+    content.parse_document(base <> "publication_order: third\n---\n")
+  let assert Error(OptionalFieldMustBeInteger("publication_order")) =
+    content.publication_order(invalid_order)
+
+  let assert Ok(Document(frontmatter: invalid_tags, ..)) =
+    content.parse_document(base <> "tags: true\n---\n")
+  let assert Error(OptionalFieldMustBeString("tags")) =
+    content.frontmatter_list(invalid_tags, "tags")
+
+  let assert Error(OptionalFieldMustBeBoolean("noindex")) =
+    content.parse_document(base <> "noindex: perhaps\n---\n")
+}
+
+pub fn shortcode_expansion_test() {
+  let markdown =
+    "Before\n{{ example }}\n```md\n{{ example }}\n```\n{{ example }} after"
+  let shortcode = Shortcode(marker: "{{ example }}", html: "<p>Expanded</p>")
+
+  assert shortcodes.expand(markdown, [shortcode])
+    == "Before\n<p>Expanded</p>\n```md\n{{ example }}\n```\n{{ example }} after"
 }

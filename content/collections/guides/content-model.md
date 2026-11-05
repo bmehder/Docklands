@@ -1,6 +1,6 @@
 ---
 title: Shape content without inventing a CMS
-description: Use routes, collections, frontmatter, and explicit components as a compact content model.
+description: Use routes, collections, frontmatter, and explicit HTML functions as a compact content model.
 published: 2026-09-27
 tags: Content model, Collections, Shortcodes
 featured_image: /assets/images/guide-content.svg
@@ -33,4 +33,4 @@ Every item carries:
 
 Markers such as `{{ featured-image }}` are commonly called shortcodes. In Docklands, a shortcode is expanded only when it occupies a line by itself. That means this inline example remains documentation instead of turning into an image.
 
-The replacement HTML comes from a named Gleam function before Markdown is rendered. This is deliberately less powerful than a general template language—and easier to trace.
+The replacement HTML comes from a named Gleam function before Markdown is rendered. Collection and item HTML live with the `Item` type in `src/collections.gleam`, this website's collection configuration lives in `src/config.gleam`, and the matching rule lives in `src/shortcodes.gleam`. This is deliberately less powerful than a general template language—and easier to trace.

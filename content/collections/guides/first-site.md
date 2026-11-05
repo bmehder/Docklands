@@ -27,13 +27,12 @@ The Markdown body can contain ordinary prose, lists, links, and raw HTML wheneve
 
 ## Run the complete build
 
-The root build command performs the whole journey:
+The root build command performs the whole journey in two phases:
 
-1. Gleam discovers routes and collection items.
-2. Mörk converts Markdown to HTML.
-3. Shared Gleam functions add layout and metadata.
-4. Images, CSS, and the isolated widget are prepared.
-5. Everything deployable lands in `dist/`.
+1. `build:pages` runs Gleam. It discovers routes and collection items, uses Mörk to convert Markdown, applies the shared layout, writes tag pages, sitemap, and robots file, and copies passthrough assets.
+2. `build:postprocess` highlights code, writes optimized WebP and favicon files, bundles the isolated widget, and compiles the Tailwind stylesheet.
+
+Everything deployable lands in `dist/`. Raster source images do not: Sharp is the only step that writes raster files beneath `dist/assets/images/`.
 
 ## Read the output
 

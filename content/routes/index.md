@@ -77,7 +77,7 @@ published: 2026-09-30
       <a href='/guides/assets-and-images/'>Manage images and icons <span aria-hidden='true'>→</span></a>
     </article>
     <article>
-      <span>Discovery</span>
+      <span>Publishing</span>
       <h3>Metadata without repetition</h3>
       <p>The shared layout produces canonical links, social metadata, a sitemap, robots.txt, and a proper static 404 page.</p>
       <a href='/guides/build-and-publish/'>See what gets built <span aria-hidden='true'>→</span></a>
@@ -98,11 +98,11 @@ published: 2026-09-30
   <h2>Nothing mysterious reaches production.</h2>
   <div class='output-terminal'>
     <div class='terminal-bar'><span></span><span></span><span></span><small>npm run build</small></div>
-    <pre><code><b>01</b> Markdown parsed
-<b>02</b> Shared layout applied
-<b>03</b> Images optimized
-<b>04</b> Lustre island bundled
-<b>05</b> HTML, CSS and assets written to dist/
+    <pre><code><b>01</b> Gleam pages generated
+<b>02</b> Passthrough assets copied
+<b>03</b> Code and images postprocessed
+<b>04</b> Widget and Tailwind bundled
+<b>05</b> Deployable files ready in dist/
 
 <strong>✓ Build complete</strong></code></pre>
   </div>

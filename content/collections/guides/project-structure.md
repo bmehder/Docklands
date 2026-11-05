@@ -25,7 +25,7 @@ Most website changes begin in one of three places:
 
 The remaining working directories explain how Docklands turns those inputs into a website:
 
-- `src/` contains the small Gleam build pipeline. `docklands.gleam` is the top-level recipe, `content.gleam` parses frontmatter and shortcodes, and `generator.gleam` writes routes, collection items, tags, and discovery files. The neighbouring modules define collections, reusable HTML components, and the shared page layout.
+- `src/` contains the small Gleam build pipeline. `config.gleam` is the central place for site identity, navigation, enabled site-wide features, and collection configuration. `docklands.gleam` orchestrates the build, `content.gleam` parses frontmatter, `shortcodes.gleam` expands explicit Markdown markers, and `generator.gleam` writes routes, collection items, tags, the sitemap, and robots file. `collections.gleam` owns collection item types and rendering, `layout.gleam` owns the shared page structure, and `output.gleam` contains the small URL and escaping helpers used while generating files.
 - `scripts/` contains supporting build steps that do not belong in the generator.
 - `test/` verifies the generated output and important URL behaviour.
 
@@ -37,4 +37,6 @@ Markdown owns page content. Gleam owns repeated structure and generation. CSS ow
 
 ## Start with the smallest relevant file
 
-For a copy change, begin in `content/routes/` or `content/collections/`. For shared navigation or metadata, begin in `src/site.gleam`. For a repeated content block, look in `src/components.gleam`. Parsing conventions belong in `src/content.gleam`; generated page behaviour belongs in `src/generator.gleam`. Move into build code only when the behaviour truly applies across the site.
+For a copy change, begin in `content/routes/` or `content/collections/`. For the site name, base URL, GitHub link, navigation, back-to-top setting, or collection definitions, begin in `src/config.gleam`. Shared page markup belongs in `src/layout.gleam`; collection and item rendering belongs in `src/collections.gleam`; shortcode matching belongs in `src/shortcodes.gleam`; shared output formatting belongs in `src/output.gleam`. Parsing conventions belong in `src/content.gleam`, while generated page behaviour belongs in `src/generator.gleam`. Move into build code only when the behaviour truly applies across the site.
+
+Set `github_url` to `None` when the header should not show a GitHub link. Use `Some("https://github.com/example/project")` to enable it.

@@ -1,14 +1,16 @@
-import collections.{type Collection, type Item, Collection, FeaturedImage, Item}
-import components
-import content.{type Shortcode, Document, Shortcode}
+import collections.{type Item, FeaturedImage, Item}
+import config.{type Collection, Collection}
+import content.{Document}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/string
+import layout
 import mork
+import output
+import shortcodes.{type Shortcode, Shortcode}
 import simplifile
-import site
 
 const routes_directory = "content/routes"
 
@@ -71,14 +73,14 @@ fn build_route(
 
   let rendered_content =
     markdown
-    |> content.expand_shortcodes(shortcodes)
+    |> shortcodes.expand(shortcodes)
     |> mork.parse
     |> mork.to_html
 
   let path = route_path(relative_path)
   let html =
-    site.page(
-      site.Metadata(
+    layout.page(
+      layout.Metadata(
         title:,
         description:,
         path:,
@@ -175,22 +177,22 @@ fn load_item(collection: Collection, source_filename: String) -> Item {
     published:,
     indexable:,
     markdown:,
-    metadata:,
+    frontmatter:,
   )) = content.parse_document(source_markdown)
 
-  let tags = content.metadata_list(metadata, "tags")
-  let featured_image = content.parse_featured_image(metadata)
+  let assert Ok(tags) = content.frontmatter_list(frontmatter, "tags")
+  let assert Ok(featured_image) = content.parse_featured_image(frontmatter)
+  let assert Ok(publication_order) = content.publication_order(frontmatter)
+  let assert Ok(series_label) =
+    content.optional_string(frontmatter, "series_label")
 
   Item(
     slug:,
     title:,
     description:,
     published:,
-    publication_order: content.publication_order(metadata),
-    series_label: case content.metadata_string(metadata, "series_label") {
-      Ok(label) -> Some(label)
-      Error(_) -> None
-    },
+    publication_order:,
+    series_label:,
     tags:,
     featured_image:,
     indexable: collection_is_indexable && indexable,
@@ -223,7 +225,7 @@ fn collection_shortcode(loaded_collection: LoadedCollection) -> Shortcode {
 
   Shortcode(
     marker: shortcode,
-    html: components.collection_list(route, item_label, items),
+    html: collections.collection_list(route, item_label, items),
   )
 }
 
@@ -245,46 +247,47 @@ fn build_collection(
 
 fn build_item(
   collection: Collection,
-  item: Item,
+  loaded_item: Item,
   shortcodes: List(Shortcode),
 ) -> Nil {
   let Collection(route:, item_label:, ..) = collection
 
-  let Item(slug:, title:, description:, published:, tags:, markdown:, ..) = item
+  let Item(slug:, title:, description:, published:, tags:, markdown:, ..) =
+    loaded_item
 
   let output_directory = "dist/" <> route <> "/" <> slug
   let item_shortcodes = [
     Shortcode(
       marker: "{{ featured-image }}",
-      html: components.featured_image(item),
+      html: collections.featured_image(loaded_item),
     ),
     ..shortcodes
   ]
 
-  let item_html =
+  let rendered_item_html =
     markdown
-    |> content.expand_shortcodes(item_shortcodes)
+    |> shortcodes.expand(item_shortcodes)
     |> mork.parse
     |> mork.to_html
 
   let page_content =
     "<article class='item-content'>"
-    <> components.item_meta(route, item_label, published)
-    <> components.tag_list(tags)
-    <> item_html
+    <> collections.item_meta(route, item_label, published)
+    <> collections.tag_list(tags)
+    <> rendered_item_html
     <> "</article>"
 
   let path = "/" <> route <> "/" <> slug <> "/"
 
-  let Item(featured_image:, indexable:, ..) = item
+  let Item(featured_image:, indexable:, ..) = loaded_item
   let social_image = case featured_image {
     Some(FeaturedImage(src:, ..)) -> src
     None -> "/assets/og.png"
   }
 
   let html =
-    site.page(
-      site.Metadata(
+    layout.page(
+      layout.Metadata(
         title:,
         description:,
         path:,
@@ -326,7 +329,7 @@ fn build_tag_index(tags: List(String), tagged_items: List(TaggedItem)) -> Nil {
       "<a href='/tags/"
       <> collections.tag_slug(tag)
       <> "/'><span>"
-      <> site.escape_html(tag)
+      <> output.escape_html(tag)
       <> "</span><small>"
       <> int.to_string(matching_item_count)
       <> case matching_item_count {
@@ -345,8 +348,8 @@ fn build_tag_index(tags: List(String), tagged_items: List(TaggedItem)) -> Nil {
     <div class='tag-index'>" <> tag_links <> "</div>"
 
   let html =
-    site.page(
-      site.Metadata(
+    layout.page(
+      layout.Metadata(
         title: "Tags — Docklands",
         description: "Browse every topic used across Docklands guides and notes.",
         path: "/tags/",
@@ -383,13 +386,13 @@ fn build_tag_page(tag: String, tagged_items: List(TaggedItem)) -> Nil {
   let path = "/tags/" <> collections.tag_slug(tag) <> "/"
   let page_content = "<section class='tag-heading'>
       <p class='eyebrow'>Tag</p>
-      <h1>" <> site.escape_html(tag) <> "</h1>
+      <h1>" <> output.escape_html(tag) <> "</h1>
       <p>Everything published with this tag, across every Docklands collection.</p>
-    </section>" <> components.tagged_item_list(card_items)
+    </section>" <> collections.tagged_item_list(card_items)
 
   let html =
-    site.page(
-      site.Metadata(
+    layout.page(
+      layout.Metadata(
         title:,
         description:,
         path:,
@@ -436,9 +439,9 @@ fn tag_names(tagged_items: List(TaggedItem)) -> List(String) {
   |> list.sort(string.compare)
 }
 
-// Discovery files
+// Sitemap and robots
 
-pub fn write_discovery_files(
+pub fn write_sitemap_and_robots(
   route_sources: List(String),
   loaded_collections: List(LoadedCollection),
 ) -> Nil {
@@ -501,7 +504,7 @@ pub fn write_discovery_files(
     <> sitemap_entries
     <> "\n</urlset>\n"
 
-  let sitemap_location = site.absolute_url("/sitemap.xml")
+  let sitemap_location = output.absolute_url("/sitemap.xml")
 
   let robots =
     "User-agent: *\n"
@@ -524,7 +527,7 @@ fn sitemap_url(path: String, last_modified: Option(String)) -> String {
   }
 
   "  <url>\n    <loc>"
-  <> site.absolute_url(path)
+  <> output.absolute_url(path)
   <> "</loc>"
   <> last_modified_xml
   <> "\n  </url>"

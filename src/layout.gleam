@@ -1,8 +1,8 @@
-import gleam/option.{Some}
+import config
+import gleam/list
+import gleam/option.{None, Some}
 import gleam/string
-import gleam/uri.{type Uri, Uri}
-
-pub const base_url = "https://docklands-ssg.vercel.app"
+import output
 
 pub type Metadata {
   Metadata(
@@ -16,21 +16,35 @@ pub type Metadata {
 }
 
 pub fn page(metadata: Metadata, content: String) -> String {
+  "<!doctype html>
+<html lang='en'>
+  " <> document_head(metadata) <> "
+  <body class='min-h-screen bg-[#071014] font-sans text-slate-100 antialiased'>
+    " <> header() <> "
+    <main class='page-content'>
+      <div>
+      " <> content <> "
+      </div>
+    </main>
+    " <> footer() <> back_to_top() <> "
+  </body>
+</html>
+"
+}
+
+fn document_head(metadata: Metadata) -> String {
   let Metadata(title:, description:, path:, image:, page_type:, indexable:) =
     metadata
-  let title = escape_html(title)
-  let description = escape_html(description)
-  let canonical_url = escape_html(absolute_url(path))
-  let image_url = escape_html(absolute_url(image))
-  let content = external_links_open_in_new_tab(content)
+  let title = output.escape_html(title)
+  let description = output.escape_html(description)
+  let canonical_url = path |> output.absolute_url |> output.escape_html
+  let image_url = image |> output.absolute_url |> output.escape_html
   let robots = case indexable {
     True -> ""
     False -> "\n    <meta name='robots' content='noindex'>"
   }
 
-  "<!doctype html>
-<html lang='en'>
-  <head>
+  "<head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <meta name='theme-color' content='#071014'>
@@ -50,83 +64,20 @@ pub fn page(metadata: Metadata, content: String) -> String {
     <link rel='icon' href='/favicon-32.png' type='image/png' sizes='32x32'>
     <link rel='apple-touch-icon' href='/apple-touch-icon.png' sizes='180x180'>
     <link rel='stylesheet' href='/assets/site.css'>
-  </head>
-  <body class='min-h-screen bg-[#071014] font-sans text-slate-100 antialiased'>
-    " <> header() <> "
-    <main class='page-content'>
-      <div>
-      " <> content <> "
-      </div>
-    </main>
-    " <> footer() <> back_to_top() <> "
-  </body>
-</html>
-"
-}
-
-fn external_links_open_in_new_tab(content: String) -> String {
-  content
-  |> string.replace(
-    " href='http",
-    " target='_blank' rel='noopener noreferrer' href='http",
-  )
-  |> string.replace(
-    " href=\"http",
-    " target=\"_blank\" rel=\"noopener noreferrer\" href=\"http",
-  )
-}
-
-pub fn absolute_url(reference: String) -> String {
-  let assert Ok(reference_uri) = uri.parse(reference)
-
-  case reference_uri {
-    Uri(scheme: Some(_), ..) -> uri.to_string(reference_uri)
-    Uri(..) -> {
-      let assert Ok(base_uri) = uri.parse(base_url)
-      let assert Ok(absolute_uri) = uri.merge(base_uri, reference_uri)
-
-      absolute_uri
-      |> preserve_trailing_slash(from: reference_uri)
-      |> uri.to_string
-    }
-  }
-}
-
-fn preserve_trailing_slash(absolute: Uri, from reference: Uri) -> Uri {
-  let Uri(path: reference_path, ..) = reference
-  let Uri(path: absolute_path, ..) = absolute
-
-  case
-    string.ends_with(reference_path, "/")
-    && !string.ends_with(absolute_path, "/")
-  {
-    True -> Uri(..absolute, path: absolute_path <> "/")
-    False -> absolute
-  }
-}
-
-pub fn escape_html(value: String) -> String {
-  value
-  |> string.replace("&", "&amp;")
-  |> string.replace("<", "&lt;")
-  |> string.replace(">", "&gt;")
-  |> string.replace("'", "&#39;")
-  |> string.replace("\"", "&quot;")
+  </head>"
 }
 
 fn header() -> String {
+  let navigation_links = navigation_links()
+
   "<header class='site-header'>
     <div class='header-inner'>
       <a class='brand' href='/'>
         <img src='/assets/docklands-mark.svg' alt='' width='38' height='38'>
-        <span>Docklands</span>
+        <span>" <> output.escape_html(config.name) <> "</span>
       </a>
       <nav class='desktop-nav' aria-label='Main navigation'>
-        <a href='/'>Home</a>
-        <a href='/about/'>About</a>
-        <a href='/guides/'>Guides</a>
-        <a href='/notes/'>Notes</a>
-        <a href='/tags/'>Tags</a>
+        " <> navigation_links <> "
         " <> github_link() <> "
       </nav>
       <div class='header-meta'>
@@ -134,11 +85,7 @@ fn header() -> String {
         <details class='mobile-menu'>
           <summary aria-label='Open navigation'>Menu</summary>
           <nav aria-label='Mobile navigation'>
-            <a href='/'>Home</a>
-            <a href='/about/'>About</a>
-            <a href='/guides/'>Guides</a>
-            <a href='/notes/'>Notes</a>
-            <a href='/tags/'>Tags</a>
+            " <> navigation_links <> "
             " <> github_link() <> "
           </nav>
         </details>
@@ -147,25 +94,51 @@ fn header() -> String {
   </header>"
 }
 
+fn navigation_links() -> String {
+  config.navigation()
+  |> list.map(fn(link) {
+    let #(label, path) = link
+
+    "<a href='"
+    <> output.escape_html(path)
+    <> "'>"
+    <> output.escape_html(label)
+    <> "</a>"
+  })
+  |> string.join("\n")
+}
+
 fn github_link() -> String {
-  "<a class='github-link' href='https://github.com/bmehder/Docklands' target='_blank' rel='noreferrer' aria-label='Docklands on GitHub'>
+  case config.github_url {
+    None -> ""
+    Some(github_url) ->
+      "<a class='github-link' href='"
+      <> output.escape_html(github_url)
+      <> "' target='_blank' rel='noreferrer' aria-label='"
+      <> output.escape_html(config.name)
+      <> " on GitHub'>
     <svg viewBox='0 0 24 24' aria-hidden='true'><path fill='currentColor' d='M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.23c-3.23.7-3.91-1.37-3.91-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.58-.29-5.29-1.29-5.29-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.72 5.39-5.31 5.68.42.36.79 1.07.79 2.16v3.21c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z'/></svg>
   </a>"
+  }
 }
 
 fn back_to_top() -> String {
-  "<button class='back-to-top' type='button' data-back-to-top aria-label='Back to top' title='Back to top' hidden>
+  case config.back_to_top {
+    False -> ""
+    True ->
+      "<button class='back-to-top' type='button' data-back-to-top aria-label='Back to top' title='Back to top' hidden>
     <svg viewBox='0 0 24 24' aria-hidden='true'>
       <path d='m6 10 6-6 6 6M12 4v16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
     </svg>
   </button>
   <script src='/assets/back-to-top.js' defer></script>"
+  }
 }
 
 fn footer() -> String {
   "<footer class='site-footer'>
     <div class='footer-inner'>
-      <p>Docklands</p>
+      <p>" <> output.escape_html(config.name) <> "</p>
       <p>Content in. Static files out.</p>
       <p>Built carefully with Gleam.</p>
     </div>

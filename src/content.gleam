@@ -1,16 +1,18 @@
-import collections.{FeaturedImage}
+import collections.{type FeaturedImage, FeaturedImage}
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import mork
 import yamleam
 import yamleam/node.{type YamlNode, YamlBool, YamlInt, YamlMap, YamlString}
 
-pub type Metadata {
-  Metadata(values: Dict(String, YamlNode))
+// Document and frontmatter types
+
+pub type Frontmatter {
+  Frontmatter(values: Dict(String, YamlNode))
 }
 
 pub type Document {
@@ -20,7 +22,7 @@ pub type Document {
     published: String,
     indexable: Bool,
     markdown: String,
-    metadata: Metadata,
+    frontmatter: Frontmatter,
   )
 }
 
@@ -30,20 +32,25 @@ pub type ParseError {
   MissingRequiredField(String)
   RequiredFieldMustBeString(String)
   EmptyRequiredField(String)
+  OptionalFieldMustBeString(String)
+  OptionalFieldMustBeInteger(String)
+  OptionalFieldMustBeBoolean(String)
+  EmptyOptionalField(String)
+  FeaturedImageRequiresAlt
+  FeaturedAltRequiresImage
   InvalidPublishedDate(String)
 }
 
-pub type Shortcode {
-  Shortcode(marker: String, html: String)
-}
+// Required frontmatter and document parsing
 
 pub fn parse_document(source: String) -> Result(Document, ParseError) {
   let #(frontmatter, markdown) = mork.split_frontmatter_from_input(source)
 
-  use metadata <- result.try(parse_metadata(frontmatter))
-  use title <- result.try(required_string(metadata, "title"))
-  use description <- result.try(required_string(metadata, "description"))
-  use published <- result.try(required_string(metadata, "published"))
+  use frontmatter <- result.try(parse_frontmatter(frontmatter))
+  use title <- result.try(required_string(frontmatter, "title"))
+  use description <- result.try(required_string(frontmatter, "description"))
+  use published <- result.try(required_string(frontmatter, "published"))
+  use noindex <- result.try(frontmatter_flag(frontmatter, "noindex"))
 
   case valid_calendar_date(published) {
     False -> Error(InvalidPublishedDate(published))
@@ -52,26 +59,26 @@ pub fn parse_document(source: String) -> Result(Document, ParseError) {
         title:,
         description:,
         published:,
-        indexable: !metadata_flag(metadata, "noindex"),
+        indexable: !noindex,
         markdown:,
-        metadata:,
+        frontmatter:,
       ))
   }
 }
 
-fn parse_metadata(frontmatter: String) -> Result(Metadata, ParseError) {
+fn parse_frontmatter(frontmatter: String) -> Result(Frontmatter, ParseError) {
   case yamleam.parse_raw(frontmatter) {
     Error(error) -> Error(InvalidYaml(error))
-    Ok(YamlMap(entries)) -> Ok(Metadata(dict.from_list(entries)))
+    Ok(YamlMap(entries)) -> Ok(Frontmatter(dict.from_list(entries)))
     Ok(_) -> Error(FrontmatterMustBeMapping)
   }
 }
 
 fn required_string(
-  metadata: Metadata,
+  frontmatter: Frontmatter,
   key: String,
 ) -> Result(String, ParseError) {
-  let Metadata(values:) = metadata
+  let Frontmatter(values:) = frontmatter
 
   case dict.get(values, key) {
     Error(_) -> Error(MissingRequiredField(key))
@@ -84,60 +91,92 @@ fn required_string(
   }
 }
 
-pub fn parse_featured_image(metadata: Metadata) {
-  case metadata_string(metadata, "featured_image") {
-    Error(_) -> None
-    Ok(src) -> {
-      let assert Ok(alt) = metadata_string(metadata, "featured_alt")
+// Optional collection frontmatter
 
-      Some(FeaturedImage(src:, alt:))
-    }
+pub fn parse_featured_image(
+  frontmatter: Frontmatter,
+) -> Result(Option(FeaturedImage), ParseError) {
+  use src <- result.try(optional_string(frontmatter, "featured_image"))
+  use alt <- result.try(optional_string(frontmatter, "featured_alt"))
+
+  case src, alt {
+    None, None -> Ok(None)
+    Some(src), Some(alt) -> Ok(Some(FeaturedImage(src:, alt:)))
+    Some(_), None -> Error(FeaturedImageRequiresAlt)
+    None, Some(_) -> Error(FeaturedAltRequiresImage)
   }
 }
 
-pub fn metadata_string(metadata: Metadata, key: String) -> Result(String, Nil) {
-  let Metadata(values:) = metadata
+pub fn optional_string(
+  frontmatter: Frontmatter,
+  key: String,
+) -> Result(Option(String), ParseError) {
+  let Frontmatter(values:) = frontmatter
 
   case dict.get(values, key) {
-    Ok(YamlString(value)) -> Ok(value)
-    _ -> Error(Nil)
+    Error(_) -> Ok(None)
+    Ok(YamlString(value)) ->
+      case string.is_empty(string.trim(value)) {
+        True -> Error(EmptyOptionalField(key))
+        False -> Ok(Some(value))
+      }
+    Ok(_) -> Error(OptionalFieldMustBeString(key))
   }
 }
 
-pub fn publication_order(metadata: Metadata) -> Int {
-  let Metadata(values:) = metadata
+pub fn publication_order(frontmatter: Frontmatter) -> Result(Int, ParseError) {
+  let Frontmatter(values:) = frontmatter
+
   case dict.get(values, "publication_order") {
-    Ok(YamlInt(value)) -> value
+    Error(_) -> Ok(0)
+    Ok(YamlInt(value)) -> Ok(value)
     Ok(YamlString(value)) ->
       case int.parse(value) {
-        Ok(order) -> order
-        Error(_) -> 0
+        Ok(order) -> Ok(order)
+        Error(_) -> Error(OptionalFieldMustBeInteger("publication_order"))
       }
-    _ -> 0
+    Ok(_) -> Error(OptionalFieldMustBeInteger("publication_order"))
   }
 }
 
-pub fn metadata_list(metadata: Metadata, key: String) -> List(String) {
-  case metadata_string(metadata, key) {
-    Error(_) -> []
-    Ok(value) ->
+pub fn frontmatter_list(
+  frontmatter: Frontmatter,
+  key: String,
+) -> Result(List(String), ParseError) {
+  use value <- result.try(optional_string(frontmatter, key))
+
+  case value {
+    None -> Ok([])
+    Some(value) ->
       value
       |> string.split(",")
       |> list.map(string.trim)
       |> list.filter(fn(item) { !string.is_empty(item) })
       |> list.unique
+      |> Ok
   }
 }
 
-fn metadata_flag(metadata: Metadata, key: String) -> Bool {
-  let Metadata(values:) = metadata
+fn frontmatter_flag(
+  frontmatter: Frontmatter,
+  key: String,
+) -> Result(Bool, ParseError) {
+  let Frontmatter(values:) = frontmatter
 
   case dict.get(values, key) {
-    Ok(YamlBool(value)) -> value
-    Ok(YamlString(value)) -> string.lowercase(value) == "true"
-    _ -> False
+    Error(_) -> Ok(False)
+    Ok(YamlBool(value)) -> Ok(value)
+    Ok(YamlString(value)) ->
+      case string.lowercase(string.trim(value)) {
+        "true" -> Ok(True)
+        "false" -> Ok(False)
+        _ -> Error(OptionalFieldMustBeBoolean(key))
+      }
+    Ok(_) -> Error(OptionalFieldMustBeBoolean(key))
   }
 }
+
+// Calendar-date validation
 
 fn valid_calendar_date(value: String) -> Bool {
   case string.split(value, "-") {
@@ -173,65 +212,4 @@ fn days_in_month(year: Int, month: Int) -> Int {
 
 fn is_leap_year(year: Int) -> Bool {
   year % 4 == 0 && { year % 100 != 0 || year % 400 == 0 }
-}
-
-pub fn expand_shortcodes(
-  markdown: String,
-  shortcodes: List(Shortcode),
-) -> String {
-  markdown
-  |> string.split("\n")
-  |> expand_shortcode_lines(shortcodes, False)
-  |> string.join("\n")
-}
-
-fn expand_shortcode_lines(
-  lines: List(String),
-  shortcodes: List(Shortcode),
-  in_code_block: Bool,
-) -> List(String) {
-  case lines {
-    [] -> []
-    [line, ..rest] -> {
-      let trimmed_line = string.trim(line)
-
-      case string.starts_with(trimmed_line, "```") {
-        True -> [
-          line,
-          ..expand_shortcode_lines(rest, shortcodes, !in_code_block)
-        ]
-        False -> {
-          let expanded_line = case in_code_block {
-            True -> line
-            False -> expand_shortcode_line(line, trimmed_line, shortcodes)
-          }
-
-          [
-            expanded_line,
-            ..expand_shortcode_lines(rest, shortcodes, in_code_block)
-          ]
-        }
-      }
-    }
-  }
-}
-
-fn expand_shortcode_line(
-  line: String,
-  trimmed_line: String,
-  shortcodes: List(Shortcode),
-) -> String {
-  case
-    list.find_map(shortcodes, fn(shortcode) {
-      let Shortcode(marker:, html:) = shortcode
-
-      case trimmed_line == marker {
-        True -> Ok(html)
-        False -> Error(Nil)
-      }
-    })
-  {
-    Ok(html) -> html
-    Error(_) -> line
-  }
 }

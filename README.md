@@ -70,12 +70,14 @@ Open [http://localhost:8000](http://localhost:8000). Python's basic server does 
 │   ├── highlight-code.mjs         # Build-time Shiki transformation
 │   └── optimize-images.mjs        # Raster and favicon processing
 ├── src/
-│   ├── collections.gleam        # Collection definitions and item types
-│   ├── content.gleam            # Frontmatter, documents, and shortcodes
-│   ├── components.gleam         # Reusable static HTML blocks
+│   ├── collections.gleam        # Collection item types and rendering
+│   ├── config.gleam             # Site identity, navigation, features, and collections
+│   ├── content.gleam            # Frontmatter and Markdown documents
 │   ├── docklands.gleam          # Top-level build orchestration
-│   ├── generator.gleam          # Route, collection, tag, and discovery output
-│   └── site.gleam               # Shared document layout and navigation
+│   ├── generator.gleam          # Routes, collections, tags, sitemap, and robots
+│   ├── layout.gleam             # Shared document layout and navigation
+│   ├── output.gleam             # Generated-output URL and escaping helpers
+│   └── shortcodes.gleam         # Explicit Markdown shortcode expansion
 ├── test/
 │   └── docklands_test.gleam   # Generated-output regression tests
 ├── widgets/
@@ -92,15 +94,20 @@ For ordinary website work, think of the directories in two groups:
 
 The remaining root files configure Gleam, npm, Git, and Vercel. The root project targets Erlang for filesystem-based generation. The separate `widgets/` project targets JavaScript, keeping browser-only dependencies away from the static builder.
 
+## Site configuration
+
+`src/config.gleam` is the first stop for website-wide changes. It contains the site name and public base URL, navigation links, collection definitions, and settings for optional layout features. Set `github_url` to `None` to omit the header's GitHub link or `Some("https://github.com/example/project")` to show it. Set `back_to_top` to `False` to omit the control and its script.
+
+The configuration file describes choices; `layout.gleam` renders the document shell, while `collections.gleam` defines collection items and their reusable HTML.
+
 ## Build pipeline
 
-`npm run build` performs five explicit steps:
+`npm run build` has two explicit phases:
 
-1. Gleam discovers routes and collection items, parses YAML frontmatter with Yamleam and Markdown with Mörk, applies the shared layout, generates tag archives and discovery files, and copies static assets.
-2. Shiki replaces labelled Markdown code fences with build-time syntax-highlighted HTML. Unlabelled and unsupported code remains unchanged, and no highlighting JavaScript is sent to the browser.
-3. The image script converts supported raster files beneath `assets/static/images/` to maximum-width 1000px quality-68 WebP output and derives favicon PNGs from one SVG master.
-4. Lustre's development tools bundle the isolated build-receipt widget into `dist/assets/build_receipt.js`.
-5. Tailwind scans the source and writes one minified stylesheet.
+1. `build:pages` runs Gleam. It discovers routes and collection items, parses YAML frontmatter with Yamleam and Markdown with Mörk, applies the shared layout, generates tag archives, `sitemap.xml`, and `robots.txt`, and copies assets that require no processing. Raster sources beneath `assets/static/images/` are deliberately excluded from that copy.
+2. `build:postprocess` runs the npm-based transformations. Shiki adds build-time syntax highlighting, Sharp produces deployable WebP images and favicon files, Lustre and esbuild bundle the isolated widget, and Tailwind writes the minified stylesheet.
+
+Each postprocess tool owns the files it adds to `dist/`. In particular, Sharp is the only producer of raster files beneath `dist/assets/images/`, so the original PNG, JPEG, AVIF, TIFF, or WebP sources are not deployed alongside their optimized output.
 
 The final `dist/` directory can be served by any static host.
 
@@ -124,17 +131,21 @@ Add `noindex: true` to omit a route or collection item from the sitemap and emit
 
 ## Collections
 
-`src/collections.gleam` defines every collection's source directory, route, shortcode, item label, and indexing policy. Docklands includes two examples: Guides for documentation and Notes for shorter architectural essays.
+`src/config.gleam` defines every collection's source directory, route, shortcode, item label, and indexing policy alongside the rest of the website configuration. Docklands includes two examples: Guides for documentation and Notes for shorter architectural essays. The `Collection` configuration type lives there too; the `Item` type and collection rendering functions live in `src/collections.gleam`.
 
 `featured_image` is optional; when it is present, `featured_alt` is required. Items are sorted newest-first. A standalone `{{ featured-image }}` shortcode places available artwork, while the collection index uses its configured shortcode.
+
+`series_label` is an optional string displayed above an item title. `publication_order` is an optional integer used only to break ties between items with the same publication date.
 
 Optional `tags` use a comma-separated list such as `tags: Gleam, Markdown, Deployment`. Tags appear on item pages and collection cards, and each one produces a cross-collection archive under `/tags/<tag>/`. The generated `/tags/` index lists the complete vocabulary and the number of matching items, making existing tags easy to discover without a CMS. Docklands deliberately keeps this author-controlled rather than adding a general taxonomy configuration system.
 
 Set a collection's `indexable` field to `False` to exclude its index and all items from search indexing and the sitemap.
 
-## Reusable components
+## Reusable HTML
 
-Shortcodes expand to HTML returned by functions in `src/components.gleam` before Markdown is parsed. A shortcode expands only when it appears on a standalone line outside a fenced code block, so inline and code examples remain literal. This keeps repeated markup in one place without introducing a general template language or constructing every page through an HTML DSL.
+Shortcodes expand to HTML returned by ordinary Gleam functions before Markdown is parsed. Collection and item HTML live beside the `Item` type in `src/collections.gleam`, organized into small sections; this website's collection configuration lives with its other settings in `src/config.gleam`. The expansion rule itself lives in `src/shortcodes.gleam`.
+
+A shortcode expands only when it appears on a standalone line outside a fenced code block, so inline and code examples remain literal. This keeps repeated markup in named functions without introducing a general template language or constructing every page through an HTML DSL.
 
 ## Interactive islands
 
@@ -148,7 +159,7 @@ Drop raster source images into `assets/static/images/`. The build recursively wr
 
 The primary Docklands mark lives at `assets/static/docklands-mark.svg` and is shared by the site header, 404 page, and this README. A matching favicon master lives at `assets/static/favicon.svg`; the build derives a 32px PNG and 180px Apple touch icon from it. Removing the custom favicon activates `assets/default/favicon.svg` as a neutral fallback.
 
-## Metadata and discovery
+## Metadata, sitemap, and robots
 
 The shared layout emits titles, descriptions, canonical URLs, Open Graph fields, X card fields, and icon links. Collection items with featured artwork use it for social previews; items without artwork and ordinary routes fall back to `assets/static/og.png`.
 
